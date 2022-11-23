@@ -5,6 +5,8 @@
 
 //****************************** COMPLETE players FIELD!!!! **********************************************************//
 
+Team::Team() : teamID(NULL), points(NULL) {}
+
 Team::Team(int teamID, int points) : teamID(teamID), players(AVL<PointerPlayer>()), points(points), totalGoals(0),
                                     totalCards(0), numPlayers(0), numGuards(0)   , numGames(0), bestGoals(nullptr) {}
 

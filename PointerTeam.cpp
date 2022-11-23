@@ -10,7 +10,9 @@
 #include "Team.h"
 #include "PointerTeam.h"
 
-PointerTeam::PointerTeam(Team* team) : teamP(teamP) {}
+PointerTeam::PointerTeam() : teamP(nullptr) {}
+
+PointerTeam::PointerTeam(Team* teamP) : teamP(teamP) {}
 
 Team* PointerTeam::getTeamP() const
 {

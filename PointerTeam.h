@@ -11,6 +11,7 @@ class PointerTeam {
 private:
     Team* teamP;
 public:
+    PointerTeam();
     explicit PointerTeam(Team* teamP);
     Team* getTeamP() const;
     bool operator<(int iden) const;

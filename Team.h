@@ -20,6 +20,7 @@ private:
     int numGames;
     PointerPlayer* bestGoals;
 public:
+    Team();
     Team(int teamID, int points);
     int getTeamID() const;
 };
