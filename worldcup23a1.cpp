@@ -1,8 +1,8 @@
 #include "worldcup23a1.h"
 
-world_cup_t::world_cup_t()
+world_cup_t::world_cup_t() : playersByID(), playersByGoals(), teams(), nonEmptyTeams(), playersByGoalsList(), totalPlayers(0), totalTeams(0), bestPlayer(nullptr)
 {
-	// TODO: Your code goes here
+
 }
 
 world_cup_t::~world_cup_t()
@@ -13,14 +13,32 @@ world_cup_t::~world_cup_t()
 
 StatusType world_cup_t::add_team(int teamId, int points)
 {
-	// TODO: Your code goes here
+    if(teamId <= 0 || points < 0) {
+        return StatusType::INVALID_INPUT;
+    }
+    if(teams.search(teamId) != nullptr) {
+        return StatusType::FAILURE;
+    }
+    Team newTeam = Team(teamId, points);
+    teams.add(newTeam);
+    totalTeams++;
 	return StatusType::SUCCESS;
 }
 
 StatusType world_cup_t::remove_team(int teamId)
 {
-	// TODO: Your code goes here
-	return StatusType::FAILURE;
+    if(teamId <= 0)
+        return StatusType::INVALID_INPUT;
+    AVL<Team> *ret = teams.search(teamId);
+    if(ret == nullptr) {
+        return StatusType::FAILURE;
+    }
+    if(ret->isEmpty()){
+        return StatusType::FAILURE;
+    }
+    teams.remove(ret->data);
+    totalTeams--;
+    return StatusType::SUCCESS;
 }
 
 StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,

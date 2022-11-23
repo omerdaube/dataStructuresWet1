@@ -19,6 +19,11 @@ public:
 
     AVL() : data(), height(0), left(nullptr), right(nullptr), parent(nullptr) {}
 
+    bool isEmpty(){
+        return data == Data();
+    }
+
+
     void add(Data data) {
         if (this->data == Data()) {
             this->data = data;
@@ -54,6 +59,22 @@ public:
         this->balance();
     }
 
+    AVL* search(int i)
+    {
+        struct AVL* current = this;
+        while (current != nullptr){
+            if(current->data == i){
+                return current;
+            }
+            else if (current->data > i) {
+                current = current->left;
+            }
+            else {
+                current = current->right;
+            }
+        }
+        return nullptr;
+    }
     int degree() {
         if ((this->left != nullptr) && (this->right != nullptr)) {
             return 2;
@@ -85,9 +106,15 @@ public:
         if (l) l->parent = this;
     }
 
+    void set_right(AVL *l) {
+        this->right = l;
+        if (l) l->parent = this;
+    }
+
     void remove(Data data){
         // in case it's the last one in the tree
         if (data == this->data && this->parent == nullptr && !this->left && !this->right) {
+            this->data = Data();
             return;
         }
         // in case we found the node
@@ -113,12 +140,12 @@ public:
                 this->height = heightCalc();
             }
             else {
-                auto *temp = this->right;
+                AVL *temp = this->right;
                 while (temp->left) temp = temp->left;
                 this->swapData(temp);
 
                 // remove parent pointer to temp
-                auto *temp_p = temp->parent;
+                AVL *temp_p = temp->parent;
                 if (temp_p->left && temp_p->left->data == temp->data)
                     temp_p->set_left(temp->right);
                 else

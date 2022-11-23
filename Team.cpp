@@ -14,3 +14,21 @@ int Team::getTeamID() const
 {
     return teamID;
 }
+
+bool Team::operator>(const Team&) const{
+
+}
+
+bool Team::operator==(int i) const{
+
+}
+
+bool operator<(const Team&, const Team&){
+
+}
+
+bool operator==(const Team&, const Team&){
+
+}
+
+

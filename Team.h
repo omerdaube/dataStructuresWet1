@@ -23,6 +23,10 @@ public:
     Team();
     Team(int teamID, int points);
     int getTeamID() const;
+    bool operator>(const Team&) const;
+    bool operator==(int i) const;
+    friend bool operator<(const Team&, const Team&);
+    friend bool operator==(const Team&, const Team&);
 };
 
 
