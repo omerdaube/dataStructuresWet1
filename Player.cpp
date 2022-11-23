@@ -3,6 +3,7 @@
 //
 
 #include "Player.h"
+#include "PointerPlayer.h"
 #include "Team.h"
 /*
 bool operator<(const Player& p1, const Player& p2){
@@ -55,4 +56,12 @@ int Player::getGoals() const {
 
 int Player::getPlayerID() const {
     return this->playerID;
+}
+
+Team* Player::getTeam() const {
+    return myTeam;
+}
+
+PointerPlayer* Player::getPlayerPointer() const {
+    return playerInTeam;
 }

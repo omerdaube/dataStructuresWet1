@@ -19,7 +19,7 @@ public:
 
     AVL() : data(), height(0), left(nullptr), right(nullptr), parent(nullptr) {}
 
-    bool isEmpty(){
+    bool isEmpty() const{
         return data == Data();
     }
 
@@ -56,7 +56,7 @@ public:
                 this->right->add(data);
             }
         }
-        this->balance();
+        this->rotate();
     }
 
     AVL* search(int i)
@@ -153,7 +153,7 @@ public:
 
                 delete temp;
                 temp_p->height = temp_p->heightCalc();
-                temp_p->balance_recursive();
+                temp_p->rotate_recursive();
             }
         }
         else {
@@ -168,7 +168,7 @@ public:
                 else
                     throw std::exception();
             }
-            this->balance();
+            this->rotate();
         }
 
     }
@@ -209,7 +209,7 @@ public:
         return n1 - n2;
     }
 
-    void balance() {
+    void rotate() {
         this->height = heightCalc();
         if (abs(this->BF()) <= 1) return;
 
@@ -226,10 +226,10 @@ public:
         }
     }
 
-    void balance_recursive() {
-        this->balance();
+    void rotate_recursive() {
+        this->rotate();
         if (this->parent)
-            this->parent->balance_recursive();
+            this->parent->rotate_recursive();
     }
 
     void swapData(AVL *B) {

@@ -1,5 +1,4 @@
 #include "worldcup23a1.h"
-
 world_cup_t::world_cup_t() : playersByID(), playersByGoals(), teams(), nonEmptyTeams(), playersByGoalsList(), totalPlayers(0), totalTeams(0), bestPlayer(nullptr)
 {
 
@@ -33,7 +32,7 @@ StatusType world_cup_t::remove_team(int teamId)
     if(ret == nullptr) {
         return StatusType::FAILURE;
     }
-    if(ret->isEmpty()){
+    if(ret->data.isEmpty()){
         return StatusType::FAILURE;
     }
     teams.remove(ret->data);
@@ -50,8 +49,49 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
 
 StatusType world_cup_t::remove_player(int playerId)
 {
-	// TODO: Your code goes here
-	return StatusType::SUCCESS;
+    bool check1 = false, check2 = false;
+	if(playerId <= 0){
+        return StatusType::INVALID_INPUT;
+    }
+    AVL<Player> *ret = playersByID.search(playerId);
+    if(ret == nullptr) {
+        return StatusType::FAILURE;
+    }
+    Player p = ret->data;
+    PointerPlayer* pp = p.getPlayerPointer();
+    Team* t = p.getTeam();
+    if(t->getNumPlayers() >= 11 && t->hasGaurd() == true) {
+        check1 = true;
+    }
+    t->getAVL().remove(*pp);
+    delete pp;
+    totalPlayers -= 1;
+    t->setTotalGoals(t->getTotalGoals() - p.getGoals());
+    t->setTotalCards(t->getTotalCards() - p.getCards());
+    t->setNumPlayers(t->getNumPlayers() - 1);
+    if(p->getIsGaurd()) {
+        t->setNumGuards(t->getNumGuards() - 1);
+    }
+    if(t->getNumPlayers() < 11 || t->hasGaurd() == false) {
+        check2 = true;
+    }
+    if(check1 && check2){
+        PointerTeam* pt = t->getNonEmpty()
+        nonEmptyTeams.remove(pt);
+        delete pt;
+    }
+    if(p == t->getBestGoals()) {
+        t->setBestGoals(t->getAVL().getMostRight()->data->getPlayerP());
+    }
+    if(p == bestPlayer){
+        bestPlayer = playersByGoals->getMostRight()->data->getPlayerP();
+    }
+    PointerPlayer* ppGoal = p.getPlayerInGoals();
+    playersByGoals.remove(ppGoal);
+    delete ppGoal;
+    playersByID.remove(p);
+    delete p;
+
 }
 
 StatusType world_cup_t::update_player_stats(int playerId, int gamesPlayed,

@@ -6,14 +6,14 @@
 #define MIVNY1_PLAYER_H
 
 class Team;
-class PlayerInTeam;
+class PointerPlayer;
 
 class Player {
 private:
     int playerID;
     Team* myTeam;
-    Player** teamPlayer;
-
+    PointerPlayer* playerInTeam;
+    PointerPlayer* playerInGoals;
     int numGames;
     int numCards;
     int numGoals;
@@ -26,7 +26,8 @@ public:
     int getCards() const;
     int getGoals() const;
     int getPlayerID() const;
-    explicit Player(PlayerInTeam*);
+    PointerPlayer* getPlayerPointer() const;
+    Team* getTeam() const;
     bool operator>(const Player&) const;
     friend bool operator<(const Player&, const Player&);
     friend bool operator==(const Player&, const Player&);

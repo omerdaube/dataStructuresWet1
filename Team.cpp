@@ -2,7 +2,6 @@
 // Created by omerd on 21/11/2022.
 //
 #include "Team.h"
-
 //****************************** COMPLETE players FIELD!!!! **********************************************************//
 
 Team::Team() : teamID(NULL), points(NULL) {}
@@ -14,21 +13,11 @@ int Team::getTeamID() const
 {
     return teamID;
 }
-
-bool Team::operator>(const Team&) const{
-
+bool Team::isEmpty() const {
+{
+    return players.AVL::isEmpty();
 }
 
-bool Team::operator==(int i) const{
 
-}
-
-bool operator<(const Team&, const Team&){
-
-}
-
-bool operator==(const Team&, const Team&){
-
-}
 
 
