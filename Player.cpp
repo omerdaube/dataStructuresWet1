@@ -34,8 +34,8 @@ bool operator<(const Player& p1, const Player& p2){
 
 Player::Player() : playerID(NULL), numCards(0), numGoals(0), isGaurd(false), myTeam(nullptr){}
 
-Player::Player(int ID, int numCards, int numGoals, bool isGaurd, Team* myTeam) :
-    playerID(ID), numCards(numCards), numGoals(numGoals), isGaurd(isGaurd), myTeam(myTeam){}
+Player::Player(int ID, int numCards, int numGoals, bool isGaurd, int gamesPlayed, Team* myTeam) :
+    playerID(ID), numCards(numCards), numGoals(numGoals), isGaurd(isGaurd), gamesPlayed(gamesPlayed), myTeam(myTeam){}
 
 bool Player::operator==(int iden) const{
     return this->playerID == iden;

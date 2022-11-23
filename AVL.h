@@ -297,6 +297,17 @@ public:
         this->right->LL();
         RR();
     }
+
+    AVL* getMostRight() const
+    {
+        if (this == nullptr) {
+            return nulptr;
+        }
+        if (this->right == nullptr) {
+            return this;
+        }
+        return (this->right)->getMostRight();
+    }
 };
 
 #endif //DATASTRUCT1_AVL_H

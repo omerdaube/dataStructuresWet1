@@ -12,7 +12,7 @@ class Player {
 private:
     int playerID;
     Team* myTeam;
-    Player** teamPlayer;
+    PointerPlayer* teamPlayer;
 
     int numGames;
     int numCards;
@@ -22,7 +22,7 @@ private:
 
 public:
     Player();
-    Player(int playerID, int numCards, int numGoals, bool isGaurd, Team* myTeam);
+    Player(int playerID, int numCards, int numGoals, bool isGaurd, int gamesPlayed, Team* myTeam);
     int getCards() const;
     int getGoals() const;
     int getPlayerID() const;

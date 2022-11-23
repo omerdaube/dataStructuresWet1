@@ -1,4 +1,5 @@
 #include "worldcup23a1.h"
+#include <memory>
 
 world_cup_t::world_cup_t()
 {
@@ -26,8 +27,45 @@ StatusType world_cup_t::remove_team(int teamId)
 StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
                                    int goals, int cards, bool goalKeeper)
 {
-	// TODO: Your code goes here
-	return StatusType::SUCCESS;
+    AVL<Team>* = playerTeam;
+    AVL<PointerPlayer>* teamPointerPlayer;
+    if ((playerID <= 0) || (teamID <= 0) || (gamesPlayed < 0) || (goals < 0) ||
+        (cards < 0) || ((gamesPlayed = 0) && ((goals > 0) || (cards > 0)))) {
+        return StatusType::INVALID_INPUT;
+    }
+    playerTeam = teams.search(teamID);
+    if (playersByID.search(playerID) || !playerTeam) {
+        return StatusType::FAILURE;
+    }
+    try {
+        Player *newPlayer = new Player(playerID, cards, goals, goalKeeper, gamesPlayed, playerTeam->getTeamID());
+        playersByID.add(*newPlayer);
+        teamPointerPlayer = new PointerPlayer(newPlayer);
+        playerTeams->players->add(teamPointerPlayer);
+        goalsPointerPlayer = new PointerPlayer(newPlayer);
+        playersByGoals.add(goalsPointerPlayer);
+        newPlayer->teamPlayer = teamPointerPlayer;
+        newPlayer->gamesPlayed -= playerTeam->numGames;
+        playerTeam->totalGoals += goals;
+        playerTeam->totalCards += cards;
+        if (goalKeeper) {
+            playerTeam->numGaurds++;
+        }
+        playerTeam->numPlayers++;
+        totalPlayers++;
+        if (newPlayer->goals > playerTeam->bestGoals->goals) {
+            playerTeam->bestGoals = newPlayer;
+            if (newPlayer->goals > bestPlayer->goals) {
+                bestPlayer = newPlayer;
+            }
+        }
+        if ((playerTeam->numPlayers >= 11) && (playerTeam->numGuards > 0)) {
+            nonEmptyTeams.add(new PointerTeam(playerTeam));
+        }
+    } catch(const std::exception& e) {
+        throw StatusType::ALLOCATION_ERROR;
+    }
+    return StatusType::SUCCESS;
 }
 
 StatusType world_cup_t::remove_player(int playerId)

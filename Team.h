@@ -18,11 +18,19 @@ private:
     int numPlayers;
     int numGuards;
     int numGames;
-    PointerPlayer* bestGoals;
+    Player* bestGoals;
 public:
     Team();
     Team(int teamID, int points);
     int getTeamID() const;
+    int getTotalGoals() const;
+    int getTotalCards() const;
+    int getNumPlayers() const;
+    Player* getBestGoals() const;
+    void setTotalGoals(int totalGoals);
+    void setTotalCards(int totalCards);
+    void setNumPlayers(int numPlayers);
+    bool hasGaurd() const;
 };
 
 

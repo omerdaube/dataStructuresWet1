@@ -14,3 +14,48 @@ int Team::getTeamID() const
 {
     return teamID;
 }
+
+int Team::getTeamID() const
+{
+    return teamID;
+}
+
+int Team::getTotalGoals() const
+{
+    return totalGoals;
+}
+
+int Team::getTotalCards() const
+{
+    return totalCards;
+}
+
+int Team::getNumPlayers() const
+{
+    return numPlayers;
+}
+
+Player* Team::getBestGoals() const
+{
+    return bestGoals;
+}
+
+void Team::setTotalGoals(int totalGoals)
+{
+    this->totalGoals = totalGoals;
+}
+
+void Team::setTotalCards(int totalCards)
+{
+    this->totlaCards = totalCards;
+}
+
+void Team::setNumPlayers(int numPlayers)
+{
+    this->numPlayers = numPlayers;
+}
+
+bool Team::hasGaurd() const
+{
+    return (numGuards >0);
+}
