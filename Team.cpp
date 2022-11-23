@@ -14,6 +14,15 @@ int Team::getTeamID() const
 {
     return teamID;
 }
+bool Team::isEmpty() const {
+{
+    return players.AVL::isEmpty();
+}
+
+
+
+
+
 
 int Team::getTeamID() const
 {

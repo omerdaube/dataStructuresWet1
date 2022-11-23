@@ -19,6 +19,11 @@ public:
 
     AVL() : data(), height(0), left(nullptr), right(nullptr), parent(nullptr) {}
 
+    bool isEmpty() const{
+        return data == Data();
+    }
+
+
     void add(Data data) {
         if (this->data == Data()) {
             this->data = data;
@@ -51,9 +56,25 @@ public:
                 this->right->add(data);
             }
         }
-        this->balance();
+        this->rotate();
     }
 
+    AVL* search(int i)
+    {
+        struct AVL* current = this;
+        while (current != nullptr){
+            if(current->data == i){
+                return current;
+            }
+            else if (current->data > i) {
+                current = current->left;
+            }
+            else {
+                current = current->right;
+            }
+        }
+        return nullptr;
+    }
     int degree() {
         if ((this->left != nullptr) && (this->right != nullptr)) {
             return 2;
@@ -85,9 +106,15 @@ public:
         if (l) l->parent = this;
     }
 
+    void set_right(AVL *l) {
+        this->right = l;
+        if (l) l->parent = this;
+    }
+
     void remove(Data data){
         // in case it's the last one in the tree
         if (data == this->data && this->parent == nullptr && !this->left && !this->right) {
+            this->data = Data();
             return;
         }
         // in case we found the node
@@ -113,12 +140,12 @@ public:
                 this->height = heightCalc();
             }
             else {
-                auto *temp = this->right;
+                AVL *temp = this->right;
                 while (temp->left) temp = temp->left;
                 this->swapData(temp);
 
                 // remove parent pointer to temp
-                auto *temp_p = temp->parent;
+                AVL *temp_p = temp->parent;
                 if (temp_p->left && temp_p->left->data == temp->data)
                     temp_p->set_left(temp->right);
                 else
@@ -126,7 +153,7 @@ public:
 
                 delete temp;
                 temp_p->height = temp_p->heightCalc();
-                temp_p->balance_recursive();
+                temp_p->rotate_recursive();
             }
         }
         else {
@@ -141,7 +168,7 @@ public:
                 else
                     throw std::exception();
             }
-            this->balance();
+            this->rotate();
         }
 
     }
@@ -182,7 +209,7 @@ public:
         return n1 - n2;
     }
 
-    void balance() {
+    void rotate() {
         this->height = heightCalc();
         if (abs(this->BF()) <= 1) return;
 
@@ -199,10 +226,10 @@ public:
         }
     }
 
-    void balance_recursive() {
-        this->balance();
+    void rotate_recursive() {
+        this->rotate();
         if (this->parent)
-            this->parent->balance_recursive();
+            this->parent->rotate_recursive();
     }
 
     void swapData(AVL *B) {

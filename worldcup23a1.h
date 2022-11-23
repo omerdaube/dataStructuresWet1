@@ -31,6 +31,7 @@ private:
     AVL<PointerTeam> nonEmptyTeams;
     DoublyLinkedList playersByGoalsList;
     int totalPlayers;
+    int totalTeams;
     Player* bestPlayer;
 
 public:

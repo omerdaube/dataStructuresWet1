@@ -7,6 +7,7 @@
 
 #include "AVL.h"
 #include "PointerPlayer.h"
+#include "PointerTeam.h"
 
 class Team {
 private:
@@ -18,6 +19,7 @@ private:
     int numPlayers;
     int numGuards;
     int numGames;
+    PointerTeam* nonEmpty;
     Player* bestGoals;
 public:
     Team();
@@ -31,7 +33,36 @@ public:
     void setTotalCards(int totalCards);
     void setNumPlayers(int numPlayers);
     bool hasGaurd() const;
+    AVL<PointerPlayer> getAVL() const;
+    bool isEmpty() const;
+    bool operator>(const Team&) const;
+    bool operator==(int) const;
+    bool operator>(int);
+    friend bool operator<(const Team&, const Team&);
+    friend bool operator==(const Team&, const Team&);
 };
 
+bool Team::operator==(int i) const{
+    return *this == Team(i,0);
+}
 
+bool operator<(const Team& t1, const Team& t2){
+    return t1.teamID < t2.teamID;
+}
+
+bool operator==(const Team& t1, const Team& t2){
+    return t1.teamID == t2.teamID;
+}
+
+bool Team::operator>(const Team& t2) const{
+    return !(*this == t2 && *this < t2);
+}
+
+bool Team::operator>(int i){
+    return *this > Team(i,0);
+}
+
+AVL<PointerPlayer> Team::getAVL() const{
+    return players;
+}
 #endif //MIVNY1_TEAM_H
