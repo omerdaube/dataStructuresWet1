@@ -5,10 +5,10 @@
 
 //****************************** COMPLETE players FIELD!!!! **********************************************************//
 
-Team::Team() : teamID(NULL), points(NULL) {}
+Team::Team() : teamID(0), points(0), players(AVL<shared_ptr<Player>>()), totalGoals(0), totalCards(0), numPlayers(0), numGuards(0), numGames(0), bestGoals(shared_ptr<Player>())  {}
 
-Team::Team(int teamID, int points) : teamID(teamID), players(AVL<PointerPlayer>()), points(points), totalGoals(0),
-                                    totalCards(0), numPlayers(0), numGuards(0)   , numGames(0), bestGoals(nullptr) {}
+Team::Team(int teamID, int points) : teamID(teamID), points(points), players(AVL<shared_ptr<Player>>()), totalGoals(0),
+                                    totalCards(0), numPlayers(0), numGuards(0), numGames(0), bestGoals(shared_ptr<Player>()) {}
 
 int Team::getTeamID() const
 {
@@ -29,7 +29,7 @@ int Team::getNumGames() const
     return numGames;
 }
 
-AVL<PointerPlayer> Team::getPlayers() const
+AVL<shared_ptr<Player>> Team::getPlayers() const
 {
     return players;
 }
@@ -49,7 +49,7 @@ int Team::getNumPlayers() const
     return numPlayers;
 }
 
-Player* Team::getBestGoals() const
+shared_ptr<Player> Team::getBestGoals() const
 {
     return bestGoals;
 }
@@ -69,17 +69,29 @@ void Team::setNumPlayers(int numPlayers)
     this->numPlayers = numPlayers;
 }
 
-void Team::setNumGuards(int numCards)
+void Team::setNumGuards(int numGuards)
 {
-    this->numGuards = numCards;
+    this->numGuards = numGuards;
 }
 
-void setBestGoals(Player* bestGoals)
+void Team::setBestGoals(shared_ptr<Player> newB)
 {
-    bestGoals = bestGoals;
+    bestGoals = newB;
 }
 
-bool Team::hasGaurd() const
+bool Team::hasGuard() const
 {
     return (numGuards > 0);
+}
+
+void Team::setPoints(int p) {
+    this->points = p;
+}
+
+int Team::getPoints() const {
+    return this->points;
+}
+
+void Team::setNumGames(int numGames) {
+    this->numGames = numGames;
 }

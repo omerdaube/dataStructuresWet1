@@ -33,20 +33,20 @@ bool operator<(const Player& p1, const Player& p2){
 //}
 
 
-Player::Player() : playerID(NULL), numCards(0), numGoals(0), isGaurd(false), myTeam(nullptr){}
+Player::Player() : playerID(NULL), numCards(0), numGoals(0), isGuard(false), numGames(0), myTeam(shared_ptr<Team>()){}
 
-Player::Player(int ID, int numCards, int numGoals, bool isGaurd, int gamesPlayed, Team* myTeam) :
-    playerID(ID), numCards(numCards), numGoals(numGoals), isGaurd(isGaurd), gamesPlayed(gamesPlayed), myTeam(myTeam){}
+Player::Player(int playerID, int numCards, int numGoals, bool isGaurd, int gamesPlayed, shared_ptr<Team> myTeam) :
+    playerID(playerID), numCards(numCards), numGoals(numGoals), isGuard(isGaurd), numGames(gamesPlayed), myTeam(myTeam){}
 
-bool Player::operator==(int iden) const{
-    return this->playerID == iden;
-}
+//bool Player::operator==(int iden) const{
+//    return this->playerID == iden;
+//}
+//
+//bool Player::operator<(int iden) const{
+//    return this->playerID < iden;
+//}
 
-bool Player::operator<(int iden) const{
-    return this->playerID < iden;
-}
-
-int Player::getCards() const {
+int Player::getNumCards() const {
     return this->numCards;
 }
 
@@ -63,25 +63,31 @@ int Player::getNumGames() const
     return this->numGames;
 }
 
-PointerPlayer* Player::getPlayerInTeam() const
-{
-    return this->playerInTeam;
-}
-
-Team* Player::getTeam() const {
+shared_ptr<Team> Player::getTeam() const {
     return this->myTeam;
 }
 
-PointerPlayer* Player::getPlayerPointer() const {
-    return this->playerInTeam;
+void Player::setNumGames(int num)
+{
+    this->numGames = num;
 }
 
-void Player::setPlayerInTeam(PointerPlayer* playerInTeam)
+void Player::setNumGoals(int num)
 {
-    this->playerInTeam = playerInTeam;
+    this->numGoals = num;
 }
 
-void Player::setNumGames(int numGames)
+void Player::setNumCards(int num)
 {
-    this->numGames = numGames;
+    this->numCards = num;
 }
+
+int Player::getIsGuard() const
+{
+    return isGuard;
+}
+
+void Player::eraseTeam() {
+    this->myTeam.reset();
+}
+

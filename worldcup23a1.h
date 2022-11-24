@@ -19,20 +19,22 @@
 #include "AVL.h"
 #include "Team.h"
 #include "Player.h"
-#include "PointerPlayer.h"
-#include "PointerTeam.h"
+#include <memory>
 #include "DoublyLinkedList.h"
+using namespace std;
 
 class world_cup_t {
 private:
-    AVL<Player> playersByID;
-    AVL<PointerPlayer> playersByGoals;
-    AVL<Team> teams;
-    AVL<PointerTeam> nonEmptyTeams;
+    AVL<shared_ptr<Player>> playersByID;
+    AVL<shared_ptr<Player>> playersByGoals;
+    AVL<shared_ptr<Team>> teams;
+    AVL<shared_ptr<Team>> nonEmptyTeams;
     DoublyLinkedList playersByGoalsList;
     int totalPlayers;
     int totalTeams;
-    Player* bestPlayer;
+    shared_ptr<Player> bestPlayer;
+
+    void removeTeamPtrInPlayers(AVL<shared_ptr<Player>>*);
 
 public:
 	// <DO-NOT-MODIFY> {
@@ -72,5 +74,6 @@ public:
 	
 	// } </DO-NOT-MODIFY>
 };
+
 
 #endif // WORLDCUP23A1_H_

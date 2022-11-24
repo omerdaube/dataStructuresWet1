@@ -4,39 +4,37 @@
 
 #ifndef MIVNY1_PLAYER_H
 #define MIVNY1_PLAYER_H
-
+#include <memory>
 class Team;
-class PointerPlayer;
+using namespace std;
 
 class Player {
 private:
     int playerID;
-    Team* myTeam;
-    PointerPlayer* playerInTeam;
-    PointerPlayer* playerInGoals;
     int numGames;
     int numCards;
     int numGoals;
-    bool isGaurd;
-    Player* closestPlayer;
+    bool isGuard;
+    shared_ptr<Team> myTeam;
 
 public:
     Player();
-    Player(int playerID, int numCards, int numGoals, bool isGaurd, int gamesPlayed, Team* myTeam);
-    int getCards() const;
+    Player(int playerID, int numCards, int numGoals, bool isGaurd, int gamesPlayed, shared_ptr<Team> myTeam);
+    int getNumCards() const;
     int getNumGoals() const;
     int getPlayerID() const;
     int getNumGames() const;
-    PointerPlayer* getPlayerInTeam() const;
-    PointerPlayer* getPlayerPointer() const;
-    Team* getTeam() const;
-    void setPlayerInTeam(PointerPlayer* playerInTeam);
-    void setNumGames(int numGames);
-    bool operator>(const Player&) const;
-    friend bool operator<(const Player&, const Player&);
-    friend bool operator==(const Player&, const Player&);
-    bool operator==(int) const;
-    bool operator<(int) const;
+    int getIsGuard() const;
+    shared_ptr<Team> getTeam() const;
+    void setNumGames(int);
+    void eraseTeam();
+    void setNumGoals(int);
+    void setNumCards(int);
+//    bool operator>(const Player&) const;
+//    friend bool operator<(const Player&, const Player&);
+//    friend bool operator==(const Player&, const Player&);
+//    bool operator==(int) const;
+//    bool operator<(int) const;
 };
 
 
