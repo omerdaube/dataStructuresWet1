@@ -43,25 +43,26 @@ StatusType world_cup_t::remove_team(int teamId)
 StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
                                    int goals, int cards, bool goalKeeper)
 {
-    AVL<Team>* = playerTeam;
-    AVL<PointerPlayer>* teamPointerPlayer;
-    if ((playerID <= 0) || (teamID <= 0) || (gamesPlayed < 0) || (goals < 0) ||
+    AVL<Team>* playerTeam;
+    PointerPlayer *teamPointerPlayer, *goalsPointerPlayer;
+    if ((playerId <= 0) || (teamId <= 0) || (gamesPlayed < 0) || (goals < 0) ||
         (cards < 0) || ((gamesPlayed = 0) && ((goals > 0) || (cards > 0)))) {
         return StatusType::INVALID_INPUT;
     }
-    playerTeam = teams.search(teamID);
-    if (playersByID.search(playerID) || !playerTeam) {
+    playerTeam = teams.search(teamId);
+    if (playersByID.search(playerId) || !playerTeam) {
         return StatusType::FAILURE;
     }
     try {
-        Player *newPlayer = new Player(playerID, cards, goals, goalKeeper, gamesPlayed, playerTeam->getTeamID());
+        Player *newPlayer = new Player(playerId, cards, goals, goalKeeper, gamesPlayed,
+                                       &(playerTeam->data));
         playersByID.add(*newPlayer);
         teamPointerPlayer = new PointerPlayer(newPlayer);
-        playerTeams->players->add(teamPointerPlayer);
+        playerTeam->data.getPlayers().add(*teamPointerPlayer);
         goalsPointerPlayer = new PointerPlayer(newPlayer);
-        playersByGoals.add(goalsPointerPlayer);
-        newPlayer->teamPlayer = teamPointerPlayer;
-        newPlayer->gamesPlayed -= playerTeam->numGames;
+        playersByGoals.add(*goalsPointerPlayer);
+        newPlayer->setPlayerInTeam(teamPointerPlayer);
+        newPlayer->setNumGames(newPlayer->getNumGames() - playerTeam->data.getNumGames());
         playerTeam->totalGoals += goals;
         playerTeam->totalCards += cards;
         if (goalKeeper) {
@@ -69,13 +70,13 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
         }
         playerTeam->numPlayers++;
         totalPlayers++;
-        if (newPlayer->goals > playerTeam->bestGoals->goals) {
+        if (newPlayer->getNumGoals()> playerTeam->bestGoals->getNumGoals()) {
             playerTeam->bestGoals = newPlayer;
-            if (newPlayer->goals > bestPlayer->goals) {
+            if (newPlayer->getNumGoals() > bestPlayer->getNumGoals()) {
                 bestPlayer = newPlayer;
             }
         }
-        if ((playerTeam->numPlayers >= 11) && (playerTeam->numGuards > 0)) {
+        if ((playerTeam->numPlayers >= 11) && (playerTeam->getNumGuards() > 0)) {
             nonEmptyTeams.add(new PointerTeam(playerTeam));
         }
     } catch(const std::exception& e) {
@@ -123,7 +124,7 @@ StatusType world_cup_t::remove_player(int playerId)
     if(p == bestPlayer){
         bestPlayer = playersByGoals->getMostRight()->data->getPlayerP();
     }
-    PointerPlayer* ppGoal = p.getPlayerInGoals();
+    PointerPlayer* ppGoal = p->getPlayerInGoals();
     playersByGoals.remove(ppGoal);
     delete ppGoal;
     playersByID.remove(p);
@@ -194,4 +195,3 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId)
 	// TODO: Your code goes here
 	return 2;
 }
-

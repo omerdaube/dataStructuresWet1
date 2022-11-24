@@ -14,19 +14,24 @@ int Team::getTeamID() const
 {
     return teamID;
 }
-bool Team::isEmpty() const {
+bool Team::isEmpty() const
 {
     return players.AVL::isEmpty();
 }
 
-
-
-
-
-
-int Team::getTeamID() const
+int Team::getNumGuards() const
 {
-    return teamID;
+    return numGuards;
+}
+
+int Team::getNumGames() const
+{
+    return numGames;
+}
+
+AVL<PointerPlayer> Team::getPlayers() const
+{
+    return players;
 }
 
 int Team::getTotalGoals() const
@@ -56,7 +61,7 @@ void Team::setTotalGoals(int totalGoals)
 
 void Team::setTotalCards(int totalCards)
 {
-    this->totlaCards = totalCards;
+    this->totalCards = totalCards;
 }
 
 void Team::setNumPlayers(int numPlayers)
@@ -64,7 +69,17 @@ void Team::setNumPlayers(int numPlayers)
     this->numPlayers = numPlayers;
 }
 
+void Team::setNumGuards(int numCards)
+{
+    this->numGuards = numCards;
+}
+
+void setBestGoals(Player* bestGoals)
+{
+    bestGoals = bestGoals;
+}
+
 bool Team::hasGaurd() const
 {
-    return (numGuards >0);
+    return (numGuards > 0);
 }

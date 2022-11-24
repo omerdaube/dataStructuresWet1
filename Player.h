@@ -24,10 +24,14 @@ public:
     Player();
     Player(int playerID, int numCards, int numGoals, bool isGaurd, int gamesPlayed, Team* myTeam);
     int getCards() const;
-    int getGoals() const;
+    int getNumGoals() const;
     int getPlayerID() const;
+    int getNumGames() const;
+    PointerPlayer* getPlayerInTeam() const;
     PointerPlayer* getPlayerPointer() const;
     Team* getTeam() const;
+    void setPlayerInTeam(PointerPlayer* playerInTeam);
+    void setNumGames(int numGames);
     bool operator>(const Player&) const;
     friend bool operator<(const Player&, const Player&);
     friend bool operator==(const Player&, const Player&);

@@ -28,10 +28,15 @@ public:
     int getTotalGoals() const;
     int getTotalCards() const;
     int getNumPlayers() const;
+    int getNumGuards() const;
+    int getNumGames() const;
+    AVL<PointerPlayer> getPlayers() const;
     Player* getBestGoals() const;
     void setTotalGoals(int totalGoals);
     void setTotalCards(int totalCards);
     void setNumPlayers(int numPlayers);
+    void setNumGuards(int numCards);
+    void setBestGoals(Player* bestGoals);
     bool hasGaurd() const;
     AVL<PointerPlayer> getAVL() const;
     bool isEmpty() const;

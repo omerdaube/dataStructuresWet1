@@ -50,7 +50,7 @@ int Player::getCards() const {
     return this->numCards;
 }
 
-int Player::getGoals() const {
+int Player::getNumGoals() const {
     return this->numGoals;
 }
 
@@ -58,10 +58,30 @@ int Player::getPlayerID() const {
     return this->playerID;
 }
 
+int Player::getNumGames() const
+{
+    return this->numGames;
+}
+
+PointerPlayer* Player::getPlayerInTeam() const
+{
+    return this->playerInTeam;
+}
+
 Team* Player::getTeam() const {
-    return myTeam;
+    return this->myTeam;
 }
 
 PointerPlayer* Player::getPlayerPointer() const {
-    return playerInTeam;
+    return this->playerInTeam;
+}
+
+void Player::setPlayerInTeam(PointerPlayer* playerInTeam)
+{
+    this->playerInTeam = playerInTeam;
+}
+
+void Player::setNumGames(int numGames)
+{
+    this->numGames = numGames;
 }
