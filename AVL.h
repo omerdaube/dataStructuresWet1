@@ -480,16 +480,17 @@ public:
     template <class Func>
     void updateInorder(Func f, int elementsNum)
     {
+        AVL* currentP = this, fatherP = nullptr;
         int j = 0;
         while (j < elementsNum) {
             while (currentP != nullptr && currentP->left != nullptr) {
-                fa**************************************************therP = currentP;
+                fatherP = currentP;
                 currentP = currentP->left;
             }
-            this->data = arr[j]->data;
+            f(currentP);
             j++;
             if (currentP == fatherP->left) {
-                fatherP->data = arr[j]->data;
+                f(fatherP);
                 j++;
                 currentP = fatherP->right;
             }
