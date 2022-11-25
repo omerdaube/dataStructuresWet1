@@ -1,4 +1,5 @@
 #include "worldcup23a1.h"
+
 world_cup_t::world_cup_t() : playersByID(), playersByGoals(), teams(), nonEmptyTeams(), playersByGoalsList(), totalPlayers(0), totalTeams(0), bestPlayer()
 {
 

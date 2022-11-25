@@ -2,6 +2,8 @@
 // Created by mayan on 23-Nov-22.
 //
 
+/*
+
 #include "DoublyLinkedList.h"
 
 DoublyLinkedList::DoublyLinkedList() : head(nullptr) {}
@@ -85,3 +87,5 @@ void DoublyLinkedList::remove(struct Node *nodeToRemove) {
 Node* DoublyLinkedList::getHead() const{
     return head;
 }
+
+ */

@@ -8,33 +8,38 @@
 #include <stdio.h>
 #include <algorithm>
 
-template<class Data>
+template<class Data, class SortingCondition>
 class AVL {
 public:
-    Data data;
+    Data* data; // Assuming that has: default c'tor.
     int height;
     AVL* left;
     AVL* right;
     AVL* parent;
 
-    AVL() : data(), height(0), left(nullptr), right(nullptr), parent(nullptr) {}
+    AVL() : data(nullptr), height(NULL), left(nullptr), right(nullptr), parent(nullptr) {}
 
     bool isEmpty() const{
-        return data == Data();
+        return (SortingCondition(data, Data(), SortingCondition::Condition::Equals));
+        //return data == Data();
     }
 
 
-    void add(Data data) {
-        if (this->data == Data()) {
+    void add(Data* data) {
+        //if (this->data == Data()) {
+        if (SortingCondition(this->data, Data(),SortingCondition::Condition::Equals)) {
             this->data = data;
             this->parent = nullptr;
-            this->left = nullptr;//
-            this->right = nullptr;//
+            this->left = nullptr;
+            this->right = nullptr;
             return;
         }
-        if (data == this->data)
+        //if (data == this->data)
+        if (Condition(data, this->data,SortingCondition::Condition::Equals)) {
             return;
-        if (data < this->data) {
+        }
+        //if (data < this->data) {
+        if (SortingCondition(this->data, data, SortingCondition::Condition::GreaterThan)) {
             if (!this->left) {
                 this->left = new AVL();
                 this->left->data = data;
@@ -49,7 +54,7 @@ public:
             if (!this->right) {
                 this->right = new AVL();
                 this->right->data = data;
-                this->right->parent = this; //
+                this->right->parent = this;
                 this->right->height = 0;
             } else {
                 this->height = this->right->heightCalc() + 1;
@@ -63,10 +68,12 @@ public:
     {
         struct AVL* current = this;
         while (current != nullptr){
-            if(current->data == i){
+            //if(current->data == i){
+            if(SortingCondition(current->data, i,SortingCondition::Condition::Equals)) {
                 return current;
             }
-            else if (current->data > i) {
+            //else if (current->data > i) {
+            else if (SortingCondition(current->data, i, SortingCondition::Condition::GreaterThan)) {
                 current = current->left;
             }
             else {
@@ -113,16 +120,20 @@ public:
 
     void remove(Data data){
         // in case it's the last one in the tree
-        if (data == this->data && this->parent == nullptr && !this->left && !this->right) {
+        //if (data == this->data && this->parent == nullptr && !this->left && !this->right) {
+        if (SortingCondition(data, this->data, SortingCondition::Condition::Equals) && this->parent == nullptr && !this->left &&
+                !this->right) {
             this->data = Data();
             return;
         }
         // in case we found the node
-        if (data == this->data){
+        //if (data == this->data){
+        if (SortingCondition(data, this->data, SortingCondition::Condition::Equals)) {
             AVL *p = this->parent;
 
             if (this->is_leaf()) {
-                if (p->left && p->left->data == data) {
+                //if (p->left && p->left->data == data) {
+                if (p->left &&  == SortingCondition(p->left->data, data, SortingCondition::Condition::Equals)) {
                     p->left = nullptr;
                 } else {
                     p->right = nullptr;
@@ -146,10 +157,13 @@ public:
 
                 // remove parent pointer to temp
                 AVL *temp_p = temp->parent;
-                if (temp_p->left && temp_p->left->data == temp->data)
+                //if (temp_p->left &&  == )
+                if (temp_p->left &&  == SortingCondition(temp_p->left->data, temp->data, SortingCondition::Condition::Equals)) {
                     temp_p->set_left(temp->right);
-                else
+                }
+                else {
                     temp_p->set_right(temp->right);
+                }
 
                 delete temp;
                 temp_p->height = temp_p->heightCalc();
@@ -157,12 +171,14 @@ public:
             }
         }
         else {
-            if (data < this->data) {
+            //if (data < this->data) {
+            if (SortingCondition(this->data, data, SortingCondition::Condition::GreaterThan) {
                 if (this->left)
                     this->left->remove(data);
                 else
                     throw std::exception();
-            } else if (data > this->data) {
+            //} else if (data > this->data) {
+            } else if (SortingCondition(data, this->data, SortingCondition::Condition::GreaterThan)) {
                 if (this->right)
                     this->right->remove(data);
                 else
@@ -245,10 +261,14 @@ public:
             if (B->left)
                 B->left->parent = B;
 
-            if (B->parent->left && B->parent->left->data == B->data)
+            //if (B->parent->left && B->parent->left->data == B->data)
+            if (B->parent->left && SortingCondition(B->parent->left->data, B->data, SortingCondition::Condition::Equals))
+            {
                 B->parent->left = A;
-            else
+            }
+            else {
                 B->parent->right = A;
+            }
             A->parent = B->parent;
 
             A->right = B;
@@ -289,10 +309,13 @@ public:
             A->right = B->left;
             if (B->left)
                 B->left->parent = A;
-            if (A->parent->left && A->parent->left->data == A->data)
+            //if (A->parent->left && A->parent->left->data == A->data)
+            if (A->parent->left && SortingCondition(A->parent->left->data, A->data, SortingCondition::Condition::Equals)) {
                 A->parent->left = B;
-            else
+            }
+            else {
                 A->parent->right = B;
+            }
             B->parent = A->parent;
             B->left = A;
             A->parent = B;
@@ -328,14 +351,154 @@ public:
     AVL* getMostRight() const
     {
         if (this == nullptr) {
-            return nulptr;
+            return nullptr;
         }
         if (this->right == nullptr) {
             return this;
         }
         return (this->right)->getMostRight();
     }
+
+    AVL* treeToArray(int elementsNum)
+    {
+        AVL* arr = malloc(sizeOf(*this)*elementsNum);
+        int i = 0;
+        AVL *currentP = this, *fatherP = this;
+        while (i < elementsNum) {
+            while (currentP != nullptr && currentP->left != nullptr) {
+                fatherP = currentP;
+                currentP = currentP->left;
+            }
+            arr[i] = currentP;
+            i++;
+            if (currentP == fatherP->left) {
+                arr[i] = fatherP;
+                i++;
+                currentP = fatherP->right;
+            }
+            else {
+                currentP = fatherP;
+                fatherP = fatherP->father;
+            }
+        }
+    }
+
+    AVL* buildCompleteTree(AVL* tree, int height, AVL* parent)
+    {
+        if (height < 0) {
+            return nullptr;
+        }
+        this = AVL();
+        this->height = height;
+        this->father = parent;
+        this->left = buildCompleteTree(tree->left, height- 1);
+        this->right = buildCompleteTree(tree->right, height- 1);
+        return this;
+    }
+
+    AVL* arrayTotree(AVL* tree, AVL* arr, int elementsNum)
+    {
+        if (elementsNum == 0) {
+            tree->data = Data();
+            tree->left = nullptr;
+            tree->right = nullptr;
+            tree->father = nullptr;
+            return this;
+        }
+        //finding the hight of the smallest complete tree that is bigger than the required tree.
+        int height = 0, completeTreeElemNum = 1, elemToRemoveNum, i = 0, j = 0;
+        AVL *currentP = this, *fatherP = nullptr;
+        while (completeTreeElemNum < elementsNum){
+            completeTreeElemNum += 2*completeTreeElemNum;
+            height++;
+        }
+        tree = buildCompleteTree(tree, height, nullptr);
+        elemToRemoveNum = completeTreeElemNum - elementsNum;
+        while (i < elemToRemoveNum) {
+            while (currentP != nullptr && currentP->right != nullptr) {
+                fatherP = currentP;
+                currentP = currentP->right;
+            }
+            fatherP->right = nullptr;
+            i++;
+            if (currentP == fatherP->right) {
+                currentP = fatherP->left;
+            }
+            else {
+                currentP = fatherP;
+                fatherP = fatherP->father;
+            }
+        }
+        while (j < elementsNum) {
+            while (currentP != nullptr && currentP->left != nullptr) {
+                fatherP = currentP;
+                currentP = currentP->left;
+            }
+            this->data = arr[j]->data;
+            j++;
+            if (currentP == fatherP->left) {
+                fatherP->data = arr[j]->data;
+                j++;
+                currentP = fatherP->right;
+            }
+            else {
+                currentP = fatherP;
+                fatherP = fatherP->father;
+            }
+        }
+        delete(arr);
+        return tree;
+    }
+
+    AVL* merge(AVL* a, int na, AVL* b, int nb) {
+        AVL* c = malloc(sizeof(AVL)*(na+nb));
+        int ia, ib, ic;
+        for(ia = ib = ic = 0; (ia < na) && (ib < nb); ic++)
+        {
+            if(a[ia] < b[ib]) {
+                c[ic] = a[ia];
+                ia++;
+            }
+            else {
+                c[ic] = b[ib];
+                ib++;
+            }
+        }
+        for(;ia < na; ia++, ic++) c[ic] = a[ia];
+        for(;ib < nb; ib++, ic++) c[ic] = b[ib];
+        return c;
+    }
+
+    AVL* uniteTrees(AVL* tree1, int elementsNum1, AVL* tree2, int elementsNum2)
+    {
+        AVL* arr1 = tree1->treeToArray(elementsNum1);
+        AVL* arr2 = tree2->treeToArray(elementsNum2);
+        AVL* mergedArr = merge(arr1, elementsNum1, arr2, elementsNum2);
+        AVL* newTree = AVL();
+        return arrayTotree(newTree, mergedArr, (elementsNum1 + elementsNum2));
+    }
+    template <class Func>
+    void updateInorder(Func f, int elementsNum)
+    {
+        int j = 0;
+        while (j < elementsNum) {
+            while (currentP != nullptr && currentP->left != nullptr) {
+                fa**************************************************therP = currentP;
+                currentP = currentP->left;
+            }
+            this->data = arr[j]->data;
+            j++;
+            if (currentP == fatherP->left) {
+                fatherP->data = arr[j]->data;
+                j++;
+                currentP = fatherP->right;
+            }
+            else {
+                currentP = fatherP;
+                fatherP = fatherP->father;
+            }
+        }
+    }
 };
 
 #endif //DATASTRUCT1_AVL_H
-

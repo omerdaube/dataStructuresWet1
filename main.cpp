@@ -1,10 +1,10 @@
 #include <stdio.h>
 
 #include "Team.h"
-#include "PointerPlayer.h"
+//#include "PointerPlayer.h"
 #include "Player.h"
 #include "AVL.h"
-#include "DoublyLinkedList.h"
+//#include "DoublyLinkedList.h"
 int main(){
 //    AVL<Player, int> a;
 //    Team t = Team(1,0);
