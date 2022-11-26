@@ -11,86 +11,23 @@
 template<class Data, class SortingCondition>
 class AVL {
 public:
-    Data* data; // Assuming that has: default c'tor.
+    Data data; // Assuming that has: default c'tor.
     int height;
-    AVL* left;
-    AVL* right;
-    AVL* parent;
+    AVL *left;
+    AVL *right;
+    AVL *parent;
 
-    AVL() : data(nullptr), height(NULL), left(nullptr), right(nullptr), parent(nullptr) {}
+    AVL();
 
-    bool isEmpty() const{
-        return (SortingCondition(data, Data(), SortingCondition::Condition::Equals));
-        //return data == Data();
-    }
+    bool isEmpty() const;
 
+    void add(Data data1);
 
-    void add(Data* data) {
-        //if (this->data == Data()) {
-        if (SortingCondition(this->data, Data(),SortingCondition::Condition::Equals)) {
-            this->data = data;
-            this->parent = nullptr;
-            this->left = nullptr;
-            this->right = nullptr;
-            return;
-        }
-        //if (data == this->data)
-        if (Condition(data, this->data,SortingCondition::Condition::Equals)) {
-            return;
-        }
-        //if (data < this->data) {
-        if (SortingCondition(this->data, data, SortingCondition::Condition::GreaterThan)) {
-            if (!this->left) {
-                this->left = new AVL();
-                this->left->data = data;
-                this->left->parent = this;
-                this->left->height = 0;
-            }
-            else {
-                this->height = this->left->heightCalc() + 1;
-                this->left->add(data);
-            }
-        } else {
-            if (!this->right) {
-                this->right = new AVL();
-                this->right->data = data;
-                this->right->parent = this;
-                this->right->height = 0;
-            } else {
-                this->height = this->right->heightCalc() + 1;
-                this->right->add(data);
-            }
-        }
-        this->rotate();
-    }
+    AVL* search(int i);
 
-    AVL* search(int i)
-    {
-        struct AVL* current = this;
-        while (current != nullptr){
-            //if(current->data == i){
-            if(SortingCondition(current->data, i,SortingCondition::Condition::Equals)) {
-                return current;
-            }
-            //else if (current->data > i) {
-            else if (SortingCondition(current->data, i, SortingCondition::Condition::GreaterThan)) {
-                current = current->left;
-            }
-            else {
-                current = current->right;
-            }
-        }
-        return nullptr;
-    }
-    int degree() {
-        if ((this->left != nullptr) && (this->right != nullptr)) {
-            return 2;
-        }
-        if ((this->left == nullptr) && (this->right == nullptr)) {
-            return 0;
-        }
-        return 1;
-    }
+    int degree();
+
+    AVL* getClosestAndBigger(int i);
 
     int heightCalc() {
         if (degree() == -1)
@@ -106,16 +43,16 @@ public:
         return std::max(this->left->height + 1, this->right->height + 1);
     }
 
-
-
     void set_left(AVL *l) {
         this->left = l;
-        if (l) l->parent = this;
+        if (l)
+            l->parent = this;
     }
 
-    void set_right(AVL *l) {
-        this->right = l;
-        if (l) l->parent = this;
+    void set_right(AVL *r) {
+        this->right = r;
+        if (r)
+            r->parent = this;
     }
 
     void remove(Data data){
@@ -128,12 +65,12 @@ public:
         }
         // in case we found the node
         //if (data == this->data){
-        if (SortingCondition(data, this->data, SortingCondition::Condition::Equals)) {
+        if (SortingCondition(data, this->data, SortingCondition::Condition::Equals)()) {
             AVL *p = this->parent;
 
             if (this->is_leaf()) {
                 //if (p->left && p->left->data == data) {
-                if (p->left &&  == SortingCondition(p->left->data, data, SortingCondition::Condition::Equals)) {
+                if (p->left && SortingCondition(p->left->data, data, SortingCondition::Condition::Equals)) {
                     p->left = nullptr;
                 } else {
                     p->right = nullptr;
@@ -142,8 +79,6 @@ public:
                 p->height = p->heightCalc();
                 return;
             }
-
-            // if node has only left son swap him and delete the left son
             if (!this->right) {
                 this->swapData(this->left);
                 delete this->left;
@@ -154,11 +89,9 @@ public:
                 AVL *temp = this->right;
                 while (temp->left) temp = temp->left;
                 this->swapData(temp);
-
-                // remove parent pointer to temp
                 AVL *temp_p = temp->parent;
                 //if (temp_p->left &&  == )
-                if (temp_p->left &&  == SortingCondition(temp_p->left->data, temp->data, SortingCondition::Condition::Equals)) {
+                if (temp_p->left &&  SortingCondition(temp_p->left->data, temp->data, SortingCondition::Condition::Equals)) {
                     temp_p->set_left(temp->right);
                 }
                 else {
@@ -172,7 +105,7 @@ public:
         }
         else {
             //if (data < this->data) {
-            if (SortingCondition(this->data, data, SortingCondition::Condition::GreaterThan) {
+            if (SortingCondition(this->data, data, SortingCondition::Condition::GreaterThan)) {
                 if (this->left)
                     this->left->remove(data);
                 else
@@ -188,9 +121,6 @@ public:
         }
 
     }
-
-
-
 
     bool is_leaf() {
         return !left && !right;
@@ -270,38 +200,26 @@ public:
                 B->parent->right = A;
             }
             A->parent = B->parent;
-
             A->right = B;
             B->parent = A;
-
             B->heightCalc();
             A->heightCalc();
 
         } else {
             B->left = A->left;
             A->left->parent = B;
-
             A->left = A->right;
-
-
             A->right = B->right;
-            if (B->right) B->right->parent = A;
-
-
+            if (B->right)
+                B->right->parent = A;
             B->right = A;
-
             A->swapData(B);
             B->parent = nullptr;
             A->parent = B;
-
             A->heightCalc();
             B->heightCalc();
         }
-
-
     }
-
-
 
     void RR() {
         AVL *A = this, *B = A->right;
@@ -477,6 +395,7 @@ public:
         AVL* newTree = AVL();
         return arrayTotree(newTree, mergedArr, (elementsNum1 + elementsNum2));
     }
+
     template <class Func>
     void updateInorder(Func f, int elementsNum)
     {
@@ -501,5 +420,109 @@ public:
         }
     }
 };
+
+template<class Data, class SortingCondition>
+AVL<Data, SortingCondition>::AVL() : data(), height(NULL), left(nullptr), right(nullptr), parent(nullptr) {}
+
+template<class Data, class SortingCondition>
+bool AVL<Data, SortingCondition>::isEmpty() const{
+    return (SortingCondition(data, Data(), SortingCondition::Condition::Equals));
+}
+
+template<class Data, class SortingCondition>
+void AVL<Data, SortingCondition>::add(Data data1) {
+    if (SortingCondition(this->data, Data(),SortingCondition::Condition::Equals)) {
+        this->data = data1;
+        this->parent = nullptr;
+        this->left = nullptr;
+        this->right = nullptr;
+        return;
+    }
+    if (Condition(data1, this->data, SortingCondition::Condition::Equals)) {
+        return;
+    }
+    if (SortingCondition(this->data, data1, SortingCondition::Condition::GreaterThan)) {
+        if (!this->left) {
+            this->left = new AVL();
+            this->left->data = data1;
+            this->left->parent = this;
+            this->left->height = 0;
+        }
+        else {
+            this->height = this->left->heightCalc() + 1;
+            this->left->add(data1);
+        }
+    } else {
+        if (!this->right) {
+            this->right = new AVL();
+            this->right->data = data1;
+            this->right->parent = this;
+            this->right->height = 0;
+        } else {
+            this->height = this->right->heightCalc() + 1;
+            this->right->add(data1);
+        }
+    }
+    this->rotate();
+}
+
+template<class Data, class SortingCondition>
+AVL<Data, SortingCondition>* AVL<Data, SortingCondition>::search(int i)
+{
+    struct AVL* current = this;
+    while (current != nullptr){
+        //if(current->data == i){
+        if(SortingCondition(current->data, i,SortingCondition::Condition::Equals)) {
+            return current;
+        }
+            //else if (current->data > i) {
+        else if (SortingCondition(current->data, i, SortingCondition::Condition::GreaterThan)) {
+            current = current->left;
+        }
+        else {
+            current = current->right;
+        }
+    }
+    return nullptr;
+}
+
+template<class Data, class SortingCondition>
+int AVL<Data, SortingCondition>::degree() {
+    if ((this->left != nullptr) && (this->right != nullptr)) {
+        return 2;
+    }
+    if ((this->left == nullptr) && (this->right == nullptr)) {
+        return 0;
+    }
+    return 1;
+}
+
+template<class Data, class SortingCondition>
+AVL<Data, SortingCondition>* AVL<Data, SortingCondition>::getClosestAndBigger(int i){
+    AVL* a = search(i);
+    if(a != nullptr) {
+        return a;
+    }
+    Data d = Data(i);
+    add(d);
+    a = search(i);
+    AVL* current = a;
+    while(true){
+        if(!current->parent){
+            remove(d);
+            return nullptr;
+        }
+        if(current == current->parent->right){
+            current = current->parent;
+        }
+        remove(d);
+        return current->parent;
+    }
+}
+
+
+
+
+
 
 #endif //DATASTRUCT1_AVL_H

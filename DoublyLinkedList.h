@@ -13,7 +13,7 @@ class DoublyLinkedList
 private:
     struct node
     {
-        Data* data;
+        Data data;
         node* prev;
         node* next;
     };
@@ -35,9 +35,9 @@ public:
 
     bool isEmpty() const { return ( !head || !tail ); }
     // operator bool() const { return !empty(); }
-    void addToEnd(Data* data);
-    void addToBeginning(Data* data);
-    void addAfter(Data* data);
+    void addToEnd(Data data);
+    void addToBeginning(Data data);
+    void addAfter(Data data);
     Data* removeFromEnd();
     Data* removeFromBeginning();
 
@@ -59,7 +59,7 @@ DoublyLinkedList<Data>::~DoublyLinkedList()
 }
 
 template <class Data>
-void DoublyLinkedList<Data>::addToEnd(Data* data)
+void DoublyLinkedList<Data>::addToEnd(Data data)
 {
     tail = new node();
     tail->data = data;
@@ -74,7 +74,7 @@ void DoublyLinkedList<Data>::addToEnd(Data* data)
 }
 
 template <class Data>
-void DoublyLinkedList<Data>::addToBeginning(Data* data)
+void DoublyLinkedList<Data>::addToBeginning(Data data)
 {
     head = new node();
     head->data = data;
@@ -89,7 +89,7 @@ void DoublyLinkedList<Data>::addToBeginning(Data* data)
 }
 
 template <class Data>
-void DoublyLinkedList<Data>::addAfter(Data* data)
+void DoublyLinkedList<Data>::addAfter(Data data)
 {
     if (this == nullptr) {
         addToBegining(data);

@@ -22,20 +22,22 @@
 #include <memory>
 #include "DoublyLinkedList.h"
 #include "TeamsByID.h"
+#include "PlayersByID.h"
+#include "PlayersByGoals.h"
 using namespace std;
 
 class world_cup_t {
 private:
-    AVL<shared_ptr<Player>> playersByID;
-    AVL<shared_ptr<Player>> playersByGoals;
-    AVL<shared_ptr<Team>> teams;
-    AVL<shared_ptr<Team>> nonEmptyTeams;
-    DoublyLinkedList playersByGoalsList;
+    AVL<shared_ptr<Player>, PlayersByID> avlPlayersByID;
+    AVL<shared_ptr<Player>, PlayersByGoals> avlPlayersByGoals;
+    AVL<shared_ptr<Team>, TeamsByID> teams;
+    AVL<shared_ptr<Team>, TeamsByID> nonEmptyTeams;
+    DoublyLinkedList<shared_ptr<Player>> playersByGoalsList;
     int totalPlayers;
     int totalTeams;
     shared_ptr<Player> bestPlayer;
 
-    void removeTeamPtrInPlayers(AVL<shared_ptr<Player>>*);
+    void removeTeamPtrInPlayers(AVL<shared_ptr<Player>, PlayersByID>*);
 
 public:
 	// <DO-NOT-MODIFY> {
