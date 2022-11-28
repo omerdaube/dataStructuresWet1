@@ -48,6 +48,10 @@ public:
         return this->right;
     } //v
 
+    AVL* getFather(){
+        return this->father;
+    }
+
     Data getData(){
         return this->nodeData;
     } //v
@@ -198,17 +202,57 @@ public:
 //        removeFromBinTree(a->nodeData);
 //    } //V
 
-    AVL* getNextInorder(){
-        AVL* curr = this;
-        if(curr->right == nullptr){
-            return nullptr;
+//    AVL* getNextInorder(){
+//        AVL* curr = this;
+//        if(curr->right == nullptr){
+//            return nullptr;
+//        }
+//        curr = curr->right;
+//        while(curr->left != nullptr){
+//            curr = curr->left;
+//        }
+//        return curr;
+//    } //V
+
+    AVL* getNextInorder() {
+        AVL* current = this, parent;
+        if (current->right != nullptr) {
+            current = current->right;
+            while (current->left) {
+                current = current->left;
+            }
+            return current;
         }
-        curr = curr->right;
-        while(curr->left != nullptr){
-            curr = curr->left;
+        parent = current->father;
+        while (parent != nullptr) {
+            if (current == father->left) {
+                break;
+            }
+            current = parent;
+            parent = current->father;
         }
-        return curr;
-    } //V
+        return parent;
+    }
+
+    AVL* getPrevInorder() {
+        AVL* current = this, parent;
+        if (current->left != nullptr) {
+            current = current->left;
+            while (current->right) {
+                current = current->right;
+            }
+            return current;
+        }
+        parent = current->father;
+        while (parent != nullptr) {
+            if (current == father->right) {
+                break;
+            }
+            current = parent;
+            parent = current->father;
+        }
+        return parent;
+    }
 
     int BF(){
         int n1, n2;

@@ -6,6 +6,9 @@
 #include "AVL.h"
 #include "worldcup23a1.h"
 //#include "DoublyLinkedList.h"
+#include "Player.h"
+#include "AVL.h"
+#include "DoublyLinkedList.h"
 int main(){
 //    AVL<Player, int> a;
 //    Team t = Team(1,0);
@@ -83,6 +86,21 @@ int main(){
 //    wc.wc.add_player((10,5,5,2,2, false);
 //    wc.wc.add_player((11,5,5,1,2, false);
     //wc.remove_player(11);
+    //AVL<int> a = AVL<int>();
+    //a.add(2);
+    //a.remove(2);
+
+    int a = 3;
+    int b = 4;
+    int c = 5;
+    DoublyLinkedList<int>* lp = new DoublyLinkedList<int>();
+    lp->addToEnd(a);
+    lp->addToBeginning(b);
+    lp->addAfter(c);
+    lp->removeFromBeginning();
+    lp->removeFromEnd();
+    lp->removeFromBeginning();
+    lp->addAfter(2);
 
 
 //    wc.add_team( 1, 10000);

@@ -22,10 +22,19 @@ private:
     int numGuards;
     int numGames;
     shared_ptr<Player> bestGoals;
+    shared_ptr<Team> nextTeam;
+    shared_ptr<Team> nextTeamInCompetition;
+    shared_ptr<Team> prevTeamInCompetition;
+    int competitionPlayMatchScore;
+
 public:
     Team();
     Team(int teamID, int points);
     Team(int teamID, int points, AVL<shared_ptr<Player>, PlayersByGoals> players, int totalGoals, int totalCards, int numPlayers, int numGuards, int numGames, shared_ptr<Player> bestGoals);
+    AVL<shared_ptr<Player>, PlayersByGoals> getPlayers() const;
+    shared_ptr<Team> getNextTeam() const;
+    shared_ptr<Team> getNextInCompetition() const;
+    shared_ptr<Team> getPrevInCompetition() const;
     int getTeamID() const;
     int getPoints() const;
     void addGamesPlayedToEachPlayer();
@@ -36,6 +45,10 @@ public:
     int getNumGuards() const;
     int getNumGames() const;
     shared_ptr<Player> getBestGoals() const;
+    int getCompetitionPlayMatchScore() const;
+    void setNextTeam(shared_ptr<Team> nextTeam);
+    void setNextTeamInCompetition(shared_ptr<Team> nextTeamInCompetition);
+    void setPrevTeamInCompetition(shared_ptr<Team> nextTeamInCompetition);
     void setPoints(int);
     void setTotalGoals(int totalGoals);
     void setTotalCards(int totalCards);
@@ -43,6 +56,7 @@ public:
     void setNumGuards(int numCards);
     void setNumGames(int numGames);
     void setBestGoals(shared_ptr<Player> bestGoals);
+    void setCompetitionPlayMatchScore(int competitionPlayMatchScore);
     bool hasGuard() const;
     bool isEmpty() const;
     void deleteTree();

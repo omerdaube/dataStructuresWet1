@@ -5,10 +5,10 @@
 #ifndef MIVNY1_PLAYER_H
 #define MIVNY1_PLAYER_H
 #include <memory>
-#include "DoublyLinkedList.h"
+#include "PlayersByGoals.h"
 class Team;
 using namespace std;
-
+using std::shared_ptr;
 class Player {
 private:
     int playerID;
@@ -16,8 +16,9 @@ private:
     int numCards;
     int numGoals;
     bool isGuard;
-    DoublyLinkedList<shared_ptr<Player>> placeInGoalList;
     shared_ptr<Team> myTeam;
+    shared_ptr<Player> closestBelow;
+    shared_ptr<Player> closestAbove;
 
 public:
     Player();
@@ -26,7 +27,7 @@ public:
     int getNumCards() const;
     int getNumGoals() const;
     int getPlayerID() const;
-    DoublyLinkedList<shared_ptr<Player>> getPlace() const;
+    //DoublyLinkedList<shared_ptr<Player>> getPlace() const;
     int getNumGames() const;
     int getIsGuard() const;
     shared_ptr<Team> getTeam() const;
@@ -35,6 +36,10 @@ public:
     void setNumGoals(int);
     void setPlace(DoublyLinkedList<shared_ptr<Player>>);
     void setNumCards(int);
+    shared_ptr<Player> getClosestBelow();
+    shared_ptr<Player> getClosestAbove();
+    void setClosestBelow(shared_ptr<Player> closestBelow);
+    void setClosestAbove(shared_ptr<Player> closestAbove);
 //    bool operator>(const Player&) const;
 //    friend bool operator<(const Player&, const Player&);
 //    friend bool operator==(const Player&, const Player&);

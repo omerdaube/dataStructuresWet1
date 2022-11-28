@@ -91,6 +91,25 @@ void Player::eraseTeam() {
     this->myTeam.reset();
 }
 
+shared_ptr<Player> Player::getClosestBelow()
+{
+    return this->closestBelow;
+}
+
+shared_ptr<Player> Player::getClosestAbove()
+{
+    return this->closestAbove;
+}
+
+void Player::setClosestBelow(shared_ptr<Player> closestBelow)
+{
+    this->closestBelow = closestBelow;
+}
+
+void Player::setClosestAbove(shared_ptr<Player> closestAbove)
+{
+    this->closestAbove = closestAbove;
+}
 void Player::setPlace(DoublyLinkedList<shared_ptr<Player>> lst) {
     this->placeInGoalList = lst;
 }

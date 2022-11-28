@@ -53,6 +53,45 @@ shared_ptr<Player> Team::getBestGoals() const
     return bestGoals;
 }
 
+int Team::getCompetitionPlayMatchScore() const
+{
+    return this->competitionPlayMatchScore;
+}
+
+void Team::setNextTeam(shared_ptr<Team> nextTeam)
+{
+    this->nextTeam = nextTeam;
+}
+
+void Team::setNextTeamInCompetition(shared_ptr<Team> nextTeamInCompetition)
+{
+    this->nextTeamInCompetition = nextTeamInCompetition;
+}
+
+void Team::setPrevTeamInCompetition(shared_ptr<Team> nextTeamInCompetition)
+{
+    this->prevTeamInCompetition = prevTeamInCompetition;
+}
+
+AVL<shared_ptr<Player>, PlayersByGoals> Team::getPlayers() const
+{
+    return this->players;
+}
+
+shared_ptr<Team> Team::getNextTeam() const
+{
+    return this->nextTeam;
+}
+shared_ptr<Team> Team::getNextInCompetition() const
+{
+    return this->nextTeamInCompetition;
+}
+
+shared_ptr<Team> Team::getPrevInCompetition() const
+{
+    return this->prevTeamInCompetition;
+}
+
 void Team::setTotalGoals(int totalGoals)
 {
     this->totalGoals = totalGoals;
@@ -76,6 +115,11 @@ void Team::setNumGuards(int numGuards)
 void Team::setBestGoals(shared_ptr<Player> newB)
 {
     bestGoals = newB;
+}
+
+void Team::setCompetitionPlayMatchScore(int competitionPlayMatchScore)
+{
+    this->competitionPlayMatchScore = -competitionPlayMatchScore;
 }
 
 bool Team::hasGuard() const

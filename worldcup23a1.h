@@ -39,6 +39,13 @@ private:
 
     void deleteInnerTeams(AVL<shared_ptr<Team>, TeamsByID>);
     void removeTeamPtrInPlayers(AVL<shared_ptr<Player>, PlayersByID>*);
+    template <int teamPoints>
+    void updatePlayerPointsAccordingToGroup(AVL<shared_ptr<Player>, PlayersByGoals>* players);
+
+    void removeTeamPtrInPlayers(AVL<shared_ptr<Player>>*);
+    AVL<shared_ptr<Player>> BetterTeamPlayer(AVL<shared_ptr<Player>> p1, AVL<shared_ptr<Player>> p2);
+
+    void updateClosestPlayers(shared_ptr<Player> newPlayer);
 
 public:
 	// <DO-NOT-MODIFY> {

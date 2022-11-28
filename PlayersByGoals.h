@@ -6,6 +6,7 @@
 #define DATASTRUCTURESWET1_PLAYERSBYGOALS_H
 
 #include "Player.h"
+#include <memory>
 
 class PlayersByGoals {
 private:
