@@ -8,6 +8,11 @@ world_cup_t::world_cup_t() : avlPlayersByID(), avlPlayersByGoals(), teams(), non
 world_cup_t::~world_cup_t()
 {
     removeTeamPtrInPlayers(&avlPlayersByID);
+    deleteInnerTeams(teams);
+    avlPlayersByID.deleteAll();
+    avlPlayersByGoals.deleteAll();
+    teams.deleteAll();
+    nonEmptyTeams.deleteAll();
 }
 
 StatusType world_cup_t::add_team(int teamId, int points)
@@ -43,7 +48,7 @@ StatusType world_cup_t::remove_team(int teamId)
 StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed, int goals, int cards, bool goalKeeper)
 {
     if ((playerId <= 0) || (teamId <= 0) || (gamesPlayed < 0) || (goals < 0) ||
-        (cards < 0) || ((gamesPlayed = 0) && ((goals > 0) || (cards > 0)))) {
+        (cards < 0) || ((gamesPlayed == 0) && ((goals > 0) || (cards > 0)))) {
         return StatusType::INVALID_INPUT;
     }
     AVL<shared_ptr<Team>, TeamsByID>* playerTeam = teams.search(teamId);
@@ -53,21 +58,35 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed, in
     try {
         shared_ptr<Player> newPlayer = make_shared<Player>(playerId, cards, goals, goalKeeper, gamesPlayed - playerTeam->getData()->getNumGames(), playerTeam->getData());
         avlPlayersByID.add(newPlayer);
-        playerTeam->getData()->getPlayers().add(newPlayer);
+
         avlPlayersByGoals.add(newPlayer);
+
         playerTeam->getData()->setTotalGoals(playerTeam->getData()->getTotalGoals() + goals);
         playerTeam->getData()->setTotalCards(playerTeam->getData()->getTotalCards() + cards);
         playerTeam->getData()->setNumPlayers(playerTeam->getData()->getNumPlayers() + 1);
+        playerTeam->getData()->addPlayerToAvl(newPlayer);
         if (goalKeeper) {
             playerTeam->getData()->setNumGuards(playerTeam->getData()->getNumGuards() + 1);
         }
         this->totalPlayers++;
-        if (newPlayer->getNumGoals() > playerTeam->getData()->getBestGoals()->getNumGoals()) {
+        if(!playerTeam->getData()->getBestGoals()){
             playerTeam->getData()->setBestGoals(newPlayer);
-            if (newPlayer->getNumGoals() > bestPlayer->getNumGoals()) {
-                bestPlayer = newPlayer;
-            }
         }
+        else if (PlayersByGoals(newPlayer, playerTeam->getData()->getBestGoals(), 1)()){
+            playerTeam->getData()->setBestGoals(newPlayer);
+        }
+//        else if (newPlayer->getNumGoals() > playerTeam->getData()->getBestGoals()->getNumGoals()) {
+//            playerTeam->getData()->setBestGoals(newPlayer);
+//        }
+        if(!bestPlayer){
+            bestPlayer = newPlayer;
+        }
+        else if(PlayersByGoals(newPlayer, bestPlayer, 1)()){
+            bestPlayer = newPlayer;
+        }
+//        else if (newPlayer->getNumGoals() > bestPlayer->getNumGoals()) {
+//            bestPlayer = newPlayer;
+//        }
         if ((playerTeam->getData()->getNumPlayers() >= 11) && (playerTeam->getData()->getNumGuards() > 0)) {
             nonEmptyTeams.add(playerTeam->getData());
         }
@@ -92,10 +111,10 @@ StatusType world_cup_t::remove_player(int playerId)
     if(team1->getNumPlayers() >= 11 && team1->hasGuard()) {
         check1 = true;
     }
-    team1->getPlayers().remove(player1);
+    team1->removePlayerFromAvl(player1);
     totalPlayers -= 1;
     team1->setTotalGoals(team1->getTotalGoals() - player1->getNumGoals());
-    team1->setTotalCards(team1->getTotalCards() - player1->getNumGoals());
+    team1->setTotalCards(team1->getTotalCards() - player1->getNumCards());
     team1->setNumPlayers(team1->getNumPlayers() - 1);
     if(player1->getIsGuard()) {
         team1->setNumGuards(team1->getNumGuards() - 1);
@@ -107,13 +126,15 @@ StatusType world_cup_t::remove_player(int playerId)
         nonEmptyTeams.remove(team1);
     }
     if(player1 == team1->getBestGoals()) {
-        team1->setBestGoals(team1->getPlayers().getMostRight()->getData());
+        team1->setBestGoals(team1->getMostRightFromAvl());
     }
     if(player1 == bestPlayer){
         bestPlayer = avlPlayersByGoals.getMostRight()->getData();
     }
+    //playersByGoalsList.remove(player1->getPlace());
     avlPlayersByGoals.remove(player1);
     avlPlayersByID.remove(player1);
+    return StatusType::SUCCESS;
 }
 
 StatusType world_cup_t::update_player_stats(int playerId, int gamesPlayed,
@@ -126,15 +147,30 @@ StatusType world_cup_t::update_player_stats(int playerId, int gamesPlayed,
     if(ret == nullptr) {
         return StatusType::FAILURE;
     }
+    avlPlayersByGoals.remove(ret->getData());
+    shared_ptr<Team> t = ret->getData()->getTeam();
+    t->removePlayerFromAvl(ret->getData());
+    t->setTotalCards(t->getTotalCards() + cardsReceived);
+    t->setTotalGoals(t->getTotalGoals() + scoredGoals);
     ret->getData()->setNumCards(ret->getData()->getNumCards() + cardsReceived);
     ret->getData()->setNumGames(ret->getData()->getNumGames() + gamesPlayed);
     ret->getData()->setNumGoals(ret->getData()->getNumGoals() + scoredGoals);
-    if(ret->getData()->getNumGoals() > ret->getData()->getTeam()->getBestGoals()->getNumGoals()){
+//    if(ret->getData()->getNumGoals() > ret->getData()->getTeam()->getBestGoals()->getNumGoals()){
+//        ret->getData()->getTeam()->setBestGoals(ret->getData());
+//        if(ret->getData()->getNumGoals() > bestPlayer->getNumGoals()){
+//            bestPlayer = ret->getData();
+//        }
+//    }
+    if(PlayersByGoals(ret->getData(),ret->getData()->getTeam()->getBestGoals(),1)())
+    {
         ret->getData()->getTeam()->setBestGoals(ret->getData());
-        if(ret->getData()->getNumGoals() > bestPlayer->getNumGoals()){
+        if(PlayersByGoals(ret->getData(), bestPlayer, 1)()){
             bestPlayer = ret->getData();
         }
     }
+    t->addPlayerToAvl(ret->getData());
+    avlPlayersByGoals.add(ret->getData());
+    return StatusType::SUCCESS;
 }
 
 StatusType world_cup_t::play_match(int teamId1, int teamId2)
@@ -251,7 +287,7 @@ StatusType world_cup_t::get_all_players(int teamId, int *const output)
         if(ret == nullptr) {
             return StatusType::FAILURE;
         }
-        AVL<shared_ptr<Player>, PlayersByGoals>** a = ret->getData()->getPlayers().treeToArray();
+        AVL<shared_ptr<Player>, PlayersByGoals>** a = ret->getData()->getArrOfAvl();
         for (int i = 0; i < num; ++i) {
             output[i] = a[i]->getData()->getPlayerID();
         }
@@ -259,33 +295,33 @@ StatusType world_cup_t::get_all_players(int teamId, int *const output)
     return StatusType::SUCCESS;
 }
 
-output_t<int> world_cup_t::get_closest_player(int playerId, int teamId)
-{
+//output_t<int> world_cup_t::get_closest_player(int playerId, int teamId)
+//{
+//
+//}
 
-}
-
-output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId)
-{
-    if(minTeamId < 0 || maxTeamId < 0 || maxTeamId < minTeamId){
-        return StatusType::INVALID_INPUT;
-    }
-    AVL<shared_ptr<Team>, TeamsByID> *ret = nonEmptyTeams.getClosestAndBigger(minTeamId);
-    if (ret == nullptr){
-        return StatusType::FAILURE;
-    }
-    if (ret->getData()->getTeamID() > maxTeamId){
-        return StatusType::FAILURE;
-    }
-
-    DoublyLinkedList<Team> dllR = DoublyLinkedList<Team>();
-    while (v != nullptr){
-        if(la)
-        Team nt = *(v->getData());
-        dllR.addNext(nt);
-        ret = v->getNextInorder();
-    }
-
-}
+//output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId)
+//{
+//    if(minTeamId < 0 || maxTeamId < 0 || maxTeamId < minTeamId){
+//        return StatusType::INVALID_INPUT;
+//    }
+//    AVL<shared_ptr<Team>, TeamsByID> *ret = nonEmptyTeams.getClosestAndBigger(minTeamId);
+//    if (ret == nullptr){
+//        return StatusType::FAILURE;
+//    }
+//    if (ret->getData()->getTeamID() > maxTeamId){
+//        return StatusType::FAILURE;
+//    }
+//
+//    DoublyLinkedList<Team> dllR = DoublyLinkedList<Team>();
+//    while (v != nullptr){
+//        if(la)
+//        Team nt = *(v->getData());
+//        dllR.addNext(nt);
+//        ret = v->getNextInorder();
+//    }
+//
+//}
 
 void world_cup_t::removeTeamPtrInPlayers(AVL<shared_ptr<Player>, PlayersByID> * avlPlayersID) {
     if(avlPlayersID == nullptr){
@@ -295,3 +331,68 @@ void world_cup_t::removeTeamPtrInPlayers(AVL<shared_ptr<Player>, PlayersByID> * 
     removeTeamPtrInPlayers(avlPlayersID->getRight());
     removeTeamPtrInPlayers(avlPlayersID->getLeft());
 }
+
+void world_cup_t::deleteInnerTeams(AVL<shared_ptr<Team>, TeamsByID> teams2){
+    if(teams2.getLeft())
+        deleteInnerTeams(teams2.getLeft());
+    teams2.getData()->deleteTree();
+    if(teams2.getRight())
+        deleteInnerTeams(teams2.getRight());
+}
+
+StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId) {
+    if ((newTeamId <= 0) || (teamId2 <= 0) || (teamId2 == teamId1) || (teamId1 <= 0)) {
+        return StatusType::INVALID_INPUT;
+    }
+    AVL<shared_ptr<Team>, TeamsByID> *team1 = teams.search(teamId1), *team2 = teams.search(teamId2);
+    if ((!team1) || (!team2) || (teams.search(newTeamId) && newTeamId != teamId1 && newTeamId != teamId2)) {
+        return StatusType::FAILURE;
+    }
+    shared_ptr<Team> t1 = team1->getData(), t2 = team2->getData();
+    t1->addGamesPlayedToEachPlayer();
+    t2->addGamesPlayedToEachPlayer();
+    AVL<shared_ptr<Player>, PlayersByGoals>** arrOf1 = t1->avlToArrTeam();
+    AVL<shared_ptr<Player>, PlayersByGoals>** arrOf2 = t2->avlToArrTeam();
+
+    int na = team1->getData()->getNumPlayers(), nb = team2->getData()->getNumPlayers();
+    AVL<shared_ptr<Player>, PlayersByGoals>** merged =
+            new AVL<shared_ptr<Player>, PlayersByGoals>*[sizeof(AVL<shared_ptr<Player>, PlayersByGoals>*) * (na + nb)];
+    int ia, ib, ic;
+    for(ia = ib = ic = 0; (ia < na) && (ib < nb); ic++)
+    {
+        if (PlayersByGoals(arrOf2[ib]->getData(), arrOf1[ia]->getData(), 1)()) {
+            merged[ic] = arrOf1[ia];
+            ia++;
+        }
+        else {
+            merged[ic] = arrOf2[ib];
+            ib++;
+        }
+    }
+    for(;ia < na; ia++, ic++) merged[ic] = arrOf1[ia];
+    for(;ib < nb; ib++, ic++) merged[ic] = arrOf2[ib];
+    AVL<shared_ptr<Player>, PlayersByGoals> newPlayers;
+    newPlayers.arrToAvl(merged, na+nb);
+    shared_ptr<Player> bestInBoth = PlayersByGoals(t1->getBestGoals(), t2->getBestGoals(), 1)()
+            ? t1->getBestGoals() : t2->getBestGoals();
+    shared_ptr<Team> newTeam = make_shared<Team>(newTeamId,
+                 t1->getPoints() + t2->getPoints(),
+                 newPlayers,
+                 t1->getTotalGoals() + t2->getTotalGoals(),
+                 t1->getTotalCards() + t2->getTotalCards(),
+                 t1->getNumPlayers() + t2->getNumPlayers(),
+                 t1->getNumGuards() + t2->getNumGuards(),
+                 0,
+                 bestInBoth);
+    teams.remove(t1);
+    teams.remove(t2);
+    nonEmptyTeams.remove(t1);
+    nonEmptyTeams.remove(t2);
+    teams.add(newTeam);
+    if ((newTeam->getNumPlayers() >= 11) && (newTeam->hasGuard())) {
+        nonEmptyTeams.add(newTeam);
+    }
+    delete merged;
+    return StatusType::SUCCESS;
+}
+

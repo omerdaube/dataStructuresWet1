@@ -120,7 +120,7 @@ Data* DoublyLinkedList<Data>::removeFromEnd()
 {
     /*
     if (isEmpty())
-        throw EMPTY_LIST();//********************************************************************************
+        throw EMPTY_LIST();//
         */
     node* temp = this->tail;
     Data* data = tail->data;

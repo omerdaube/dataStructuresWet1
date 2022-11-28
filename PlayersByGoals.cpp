@@ -4,18 +4,21 @@
 
 #include "PlayersByGoals.h"
 
-PlayersByGoals::PlayersByGoals(shared_ptr<Player> player1, shared_ptr<Player> player2, Condition c) : player1(player1),
+PlayersByGoals::PlayersByGoals(shared_ptr<Player> player1, shared_ptr<Player> player2, int c) : player1(player1),
                                 player2(player2), c(c) {}
 
 bool PlayersByGoals::operator() () const
 {
-    bool toRet;
+    bool toRet = false;
+    if(!player1 || !player2){
+        return false;
+    }
     Player p1 = *player2, p2 = *player1;
     switch(c) {
-        case Equals:
+        case 0:
             toRet = p1.getPlayerID() == p2.getPlayerID();
             break;
-        case GreaterThan:
+        case 1:
             if(p1.getNumGoals() < p2.getNumGoals()) {
                 toRet = true;
             }
@@ -25,13 +28,11 @@ bool PlayersByGoals::operator() () const
                 }
                 else if(p1.getNumCards() == p2.getNumCards()){
                     if(p1.getPlayerID() < p2.getPlayerID()) {
-                        toRet = true
+                        toRet = true;
                     }
-                    toRet = false;
                 }
-                toRet = false;
             }
-            toRet = false;
+            break;
         default:
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
             toRet = false;

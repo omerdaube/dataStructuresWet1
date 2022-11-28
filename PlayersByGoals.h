@@ -9,12 +9,11 @@
 
 class PlayersByGoals {
 private:
-    enum Condition {Equals, GreaterThan};
     shared_ptr<Player> player1;
     shared_ptr<Player> player2;
-    Condition c;
 public:
-    PlayersByGoals(shared_ptr<Player> player1, shared_ptr<Player> player2, Condition c);
+    int c;
+    PlayersByGoals(shared_ptr<Player> player1, shared_ptr<Player> player2, int c);
 
     bool operator() () const;
 

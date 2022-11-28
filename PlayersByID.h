@@ -9,12 +9,13 @@
 
 class PlayersByID {
 private:
-    enum Condition {Equals, GreaterThan};
     shared_ptr<Player> player1;
     shared_ptr<Player> player2;
-    Condition c;
 public:
-    PlayersByID(shared_ptr<Player> player1, shared_ptr<Player> player2, Condition c);
+    int c;
+
+    PlayersByID(shared_ptr<Player> player1, shared_ptr<Player> player2, int c);
+    PlayersByID(shared_ptr<Player> player1, int player2, int c);
 
     bool operator() () const;
 

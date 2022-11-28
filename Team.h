@@ -7,6 +7,7 @@
 
 #include "AVL.h"
 #include "Player.h"
+#include "PlayersByGoals.h"
 #include <memory>
 using namespace std;
 
@@ -14,19 +15,21 @@ class Team {
 private:
     int teamID;
     int points;
-    AVL<shared_ptr<Player>> players;
+    AVL<shared_ptr<Player>, PlayersByGoals> players;
     int totalGoals;
     int totalCards;
     int numPlayers;
     int numGuards;
     int numGames;
     shared_ptr<Player> bestGoals;
-
 public:
     Team();
     Team(int teamID, int points);
+    Team(int teamID, int points, AVL<shared_ptr<Player>, PlayersByGoals> players, int totalGoals, int totalCards, int numPlayers, int numGuards, int numGames, shared_ptr<Player> bestGoals);
     int getTeamID() const;
     int getPoints() const;
+    void addGamesPlayedToEachPlayer();
+    void rec(AVL<shared_ptr<Player>, PlayersByGoals> a);
     int getTotalGoals() const;
     int getTotalCards() const;
     int getNumPlayers() const;
@@ -42,8 +45,13 @@ public:
     void setBestGoals(shared_ptr<Player> bestGoals);
     bool hasGuard() const;
     bool isEmpty() const;
-    AVL<shared_ptr<Player>> getPlayers() const;
-
+    void deleteTree();
+    //AVL<shared_ptr<Player>, PlayersByGoals> getPlayers() const;
+    void addPlayerToAvl(shared_ptr<Player> p);
+    AVL<shared_ptr<Player>, PlayersByGoals>** getArrOfAvl();
+    void removePlayerFromAvl(shared_ptr<Player> p);
+    AVL<shared_ptr<Player>, PlayersByGoals>** avlToArrTeam();
+    shared_ptr<Player> getMostRightFromAvl();
 //    bool operator>(const Team&) const;
 //    bool operator==(int) const;
 //    bool operator>(int);

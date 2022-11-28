@@ -37,6 +37,7 @@ private:
     int totalTeams;
     shared_ptr<Player> bestPlayer;
 
+    void deleteInnerTeams(AVL<shared_ptr<Team>, TeamsByID>);
     void removeTeamPtrInPlayers(AVL<shared_ptr<Player>, PlayersByID>*);
 
 public:
@@ -63,20 +64,7 @@ public:
 	
 	output_t<int> get_team_points(int teamId);
 	
-	StatusType unite_teams(int teamId1, int teamId2, int newTeamId)
-    {
-        if ((newTeamId <= 0) || (teamId2 <= 0) || (teamId2 == teamId1) || (teamId1 <= 0)) {
-            return StatusType::INVALID_INPUT;
-        }
-        AVL<Team, TeamsByID> *team1 = teams.search(teamId1), *team2 = teams.search(teamId2);
-        if ((!team1) || (!team2) || (teams.search(newTeamId) && newTeamId != teamId1 && newTeamId != teamId2)) {
-            return StatusType::FAILURE;
-        }
-        /////////////////////////////////////////
-
-
-        return StatusType::SUCCESS;
-    }
+	StatusType unite_teams(int teamId1, int teamId2, int newTeamId);
 	
 	output_t<int> get_top_scorer(int teamId);
 	

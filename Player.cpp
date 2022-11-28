@@ -33,10 +33,10 @@ bool operator<(const Player& p1, const Player& p2){
 //}
 
 
-Player::Player() : playerID(NULL), numCards(0), numGoals(0), isGuard(false), numGames(0), myTeam(shared_ptr<Team>()){}
+Player::Player() : playerID(0), numGames(0), numCards(0), numGoals(0), isGuard(false), myTeam(shared_ptr<Team>()){}
 
 Player::Player(int playerID, int numCards, int numGoals, bool isGaurd, int gamesPlayed, shared_ptr<Team> myTeam) :
-    playerID(playerID), numCards(numCards), numGoals(numGoals), isGuard(isGaurd), numGames(gamesPlayed), myTeam(myTeam){}
+    playerID(playerID), numGames(gamesPlayed), numCards(numCards), numGoals(numGoals), isGuard(isGaurd), myTeam(myTeam){}
 
 //bool Player::operator==(int iden) const{
 //    return this->playerID == iden;
@@ -90,4 +90,16 @@ int Player::getIsGuard() const
 void Player::eraseTeam() {
     this->myTeam.reset();
 }
+
+void Player::setPlace(DoublyLinkedList<shared_ptr<Player>> lst) {
+    this->placeInGoalList = lst;
+}
+
+DoublyLinkedList<shared_ptr<Player>> Player::getPlace() const {
+    return this->placeInGoalList;
+}
+
+Player::Player(int playerID) : playerID(playerID), numGames(0), numCards(0), numGoals(0), isGuard(false), myTeam(shared_ptr<Team>()){}
+
+
 

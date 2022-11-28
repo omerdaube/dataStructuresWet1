@@ -20,17 +20,25 @@ private:
     AVL* right;
     AVL* father;
 public:
-
-
     AVL() : nodeData(), nodeHeight(0), left(nullptr), right(nullptr), father(nullptr) {}
     AVL(Data d, AVL* f) : nodeData(d), nodeHeight(0), left(nullptr), right(nullptr), father(f) {}
     AVL(AVL* me) : nodeData(me->nodeData), nodeHeight(me->nodeHeight), left(me->left), right(me->right), father(me->father) {}
 
-    ~AVL(){
-//        while(this->degree() != 0){
-//            removeFromBinTree(this->nodeData);
-//        }
-    } //V
+    ~AVL() = default; //V
+
+    void deleteAll() {
+        if(!this)
+            return;
+        if (left) {
+            left->deleteAll();
+            delete left;
+        }
+        if (right) {
+            right->deleteAll();
+            delete right;
+        }
+        //delete this;
+    }
 
     AVL* getLeft(){
         return this->left;
@@ -45,14 +53,17 @@ public:
     } //v
 
     void add(Data data) {
-
-        if (Cond(data, this->nodeData, Cond::Condition::Equals)())
-            return;
-        if (Cond(Data(), this->nodeData, Cond::Condition::Equals)()) {
+        if (this->nodeData == NULL){
             this->nodeData = data;
             return;
         }
-        if (Cond(this->nodeData, data, Cond::Condition::GreaterThan)()) {
+        if (Cond(data, this->nodeData, 0)()) {
+            return;
+        }
+//        if (Cond(Data(), this->nodeData, 0)()) {
+//
+//        }
+        if (Cond(this->nodeData, data, 1)()) {
             if (!this->left) {
                 this->left = new AVL(data, this);
             }
@@ -97,7 +108,7 @@ public:
     } //v
 
     void remove(Data data){
-        if (Cond(data, this->nodeData, Cond::Condition::Equals)()){
+        if (Cond(data, this->nodeData, 0)()){
             if(degree() == 0) {
                 if(this->father == nullptr){
                     this->nodeData = Data();
@@ -137,10 +148,10 @@ public:
                 this->right->remove(data); //pass new path
             }
         }
-        else if (Cond(this->nodeData, data, Cond::Condition::GreaterThan) && this->left != nullptr) {
+        else if (Cond(this->nodeData, data, 1)() && this->left != nullptr) {
             this->left->remove(data);
         }
-        else if (Cond(data, this->nodeData, Cond::Condition::GreaterThan) && this->right != nullptr){
+        else if (Cond(data, this->nodeData, 1)() && this->right != nullptr){
             this->right->remove(data);
         }
         this->nodeHeight = heightCalc();
@@ -357,10 +368,10 @@ public:
     {
         struct AVL* current = this;
         while (current != nullptr){
-            if(Cond(current->nodeData, d, Cond::Condition::Equals)()) {
+            if(Cond(current->nodeData, d, 0)()) {
                 return current;
             }
-            else if (Cond(current->nodeData, d, Cond::Condition::GreaterThan)()) {
+            else if (Cond(current->nodeData, d, 1)()) {
                 current = current->left;
             }
             else {
@@ -401,14 +412,14 @@ public:
     }//v
 
     int getSize(AVL* a){
-        if(a == nullptr || Cond(a->nodeData, Data(), Cond::Condition::Equals)())
+        if(a == nullptr || Cond(a->nodeData, Data(), 0)())
             return 0;
         return getSize(a->left) + getSize(a->right) + 1;
     }//v
 
 
     AVL* arrToAvl(AVL** arr,int size){
-        this->nodeHeight = ceil(log(size + 1));
+        this->nodeHeight = ceil(log(size + 1)) - 1;
         this->buildCompleteTree();
         int count = pow(2, nodeHeight + 1) - 1 - size;
         int *counter = &count;
@@ -466,7 +477,7 @@ public:
         this->right->buildCompleteTree();
     }
     bool isEmpty() const{
-        return (SortingCondition(nodeData, Data(), Cond::Condition::Equals)());
+        return (Cond(nodeData, Data(), 0)());
     }
 };
 

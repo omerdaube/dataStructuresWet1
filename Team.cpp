@@ -5,10 +5,11 @@
 
 //****************************** COMPLETE players FIELD!!!! **********************************************************//
 
-Team::Team() : teamID(0), points(0), players(AVL<shared_ptr<Player>>()), totalGoals(0), totalCards(0), numPlayers(0), numGuards(0), numGames(0), bestGoals(shared_ptr<Player>())  {}
+Team::Team() : teamID(0), points(0), players(AVL<shared_ptr<Player>, PlayersByGoals>()), totalGoals(0), totalCards(0), numPlayers(0), numGuards(0), numGames(0), bestGoals(shared_ptr<Player>())  {}
 
-Team::Team(int teamID, int points) : teamID(teamID), points(points), players(AVL<shared_ptr<Player>>()), totalGoals(0),
+Team::Team(int teamID, int points) : teamID(teamID), points(points), players(AVL<shared_ptr<Player>, PlayersByGoals>()), totalGoals(0),
                                     totalCards(0), numPlayers(0), numGuards(0), numGames(0), bestGoals(shared_ptr<Player>()) {}
+
 
 int Team::getTeamID() const
 {
@@ -28,10 +29,8 @@ int Team::getNumGames() const
 {
     return numGames;
 }
-
-AVL<shared_ptr<Player>> Team::getPlayers() const
-{
-    return players;
+void Team::addPlayerToAvl(shared_ptr<Player> p){
+    this->players.add(p);
 }
 
 int Team::getTotalGoals() const
@@ -94,4 +93,48 @@ int Team::getPoints() const {
 
 void Team::setNumGames(int numGames) {
     this->numGames = numGames;
+}
+
+void Team::removePlayerFromAvl(shared_ptr<Player> p) {
+    this->players.remove(p);
+}
+
+shared_ptr<Player> Team::getMostRightFromAvl() {
+    return this->players.getMostRight()->getData();
+}
+
+void Team::deleteTree() {
+    this->players.deleteAll();
+}
+
+AVL<shared_ptr<Player>, PlayersByGoals>** Team::getArrOfAvl() {
+    return players.avlToArr();
+}
+
+AVL<shared_ptr<Player>, PlayersByGoals> **Team::avlToArrTeam() {
+    return players.avlToArr();
+}
+
+Team::Team(int teamID, int points, AVL<shared_ptr<Player>, PlayersByGoals> players, int totalGoals, int totalCards,
+           int numPlayers, int numGuards, int numGames, shared_ptr<Player> bestGoals) :
+           teamID(teamID), points(points), players(players), totalGoals(totalGoals), totalCards(totalCards),
+           numPlayers(numPlayers), numGuards(numGuards), numGames(numGames), bestGoals(bestGoals){
+
+}
+
+void Team::addGamesPlayedToEachPlayer() {
+    rec(players);
+    this->numGames = 0;
+}
+
+void Team::rec(AVL<shared_ptr<Player>, PlayersByGoals> a){
+    if(a.getLeft()){
+        rec(a.getLeft());
+    }
+    if(a.getData()) {
+        a.getData()->setNumGames(a.getData()->getNumGames() + this->numGames);
+    }
+    if(a.getRight()){
+        rec(a.getRight());
+    }
 }
