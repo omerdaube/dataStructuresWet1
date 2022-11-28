@@ -29,6 +29,8 @@ public:
     int getTeamID() const;
     int getPoints() const;
     void addGamesPlayedToEachPlayer();
+    void updatePlayersTeam(shared_ptr<Team> nt);
+    void rec2(AVL<shared_ptr<Player>, PlayersByGoals> a, shared_ptr<Team> nt);
     void rec(AVL<shared_ptr<Player>, PlayersByGoals> a);
     int getTotalGoals() const;
     int getTotalCards() const;
@@ -48,9 +50,9 @@ public:
     void deleteTree();
     //AVL<shared_ptr<Player>, PlayersByGoals> getPlayers() const;
     void addPlayerToAvl(shared_ptr<Player> p);
-    AVL<shared_ptr<Player>, PlayersByGoals>** getArrOfAvl();
+    shared_ptr<AVL<shared_ptr<Player>, PlayersByGoals>>* getArrOfAvl();
     void removePlayerFromAvl(shared_ptr<Player> p);
-    AVL<shared_ptr<Player>, PlayersByGoals>** avlToArrTeam();
+    shared_ptr<AVL<shared_ptr<Player>, PlayersByGoals>>* avlToArrTeam();
     shared_ptr<Player> getMostRightFromAvl();
 //    bool operator>(const Team&) const;
 //    bool operator==(int) const;

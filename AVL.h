@@ -4,11 +4,12 @@
 
 #ifndef AVL_H
 #define AVL_H
-
+#include <memory>
 #include <stdio.h>
 #include <math.h>
 #include <algorithm>
 using std::max;
+using std::shared_ptr;
 
 template<class Data, class Cond>
 class AVL {
@@ -32,12 +33,22 @@ public:
         if (left) {
             left->deleteAll();
             delete left;
+            this->left = nullptr;
         }
         if (right) {
             right->deleteAll();
             delete right;
+            this->right = nullptr;
         }
-        //delete this;
+
+        if(this->father){
+            if(this->father->right == this)
+                father->right = nullptr;
+            else
+                father->left = nullptr;
+        }
+        // this->nodeData = Data();
+        delete this;
     }
 
     AVL* getLeft(){
@@ -110,7 +121,7 @@ public:
     void remove(Data data){
         if (Cond(data, this->nodeData, 0)()){
             if(degree() == 0) {
-                if(this->father == nullptr){
+                if (this->father == nullptr){
                     this->nodeData = Data();
                     return;
                 }
@@ -121,7 +132,8 @@ public:
                     this->father->right = nullptr;
                 }
                 this->father->nodeHeight = this->father->heightCalc();
-                delete this;
+                this->nodeData = Data();
+                //delete this;
                 return;
             }
             else if(degree() == 1){
@@ -154,6 +166,7 @@ public:
         else if (Cond(data, this->nodeData, 1)() && this->right != nullptr){
             this->right->remove(data);
         }
+
         this->nodeHeight = heightCalc();
         this->rotate(); //for whole path
     } //v
@@ -366,20 +379,20 @@ public:
 
     AVL* search(int d)
     {
-        struct AVL* current = this;
-        while (current != nullptr){
-            if(Cond(current->nodeData, d, 0)()) {
-                return current;
-            }
-            else if (Cond(current->nodeData, d, 1)()) {
-                current = current->left;
-            }
-            else {
-                current = current->right;
-            }
+        bool chk0 = Cond(nodeData, d, 0)();
+        bool chk1 = Cond(nodeData, d, 1)();
+        if(chk0) {
+            return this;
+        }
+        else if (chk1 && left) {
+            return left->search(d);
+        }
+        else if (right){
+            return right->search(d);
         }
         return nullptr;
-    } //v
+    }
+ //v
 
     AVL* getMostRight()
     {
@@ -392,20 +405,20 @@ public:
         return (this->right)->getMostRight();
     } //v
 
-    AVL** avlToArr(){
+    shared_ptr<AVL>* avlToArr(){
         int n = getSize(this);
         int count = 0;
         int *counter = &count;
-        AVL** arr = new AVL*[sizeof(this) * n];
+        shared_ptr<AVL>* arr = new shared_ptr<AVL>[sizeof(shared_ptr<AVL>) * n];
         addToArr(arr, counter);
         return arr;
     }//v
 
-    void addToArr(AVL** arr, int* counter){
-        if(this == nullptr)
+    void addToArr(shared_ptr<AVL>* arr, int* counter){
+        if(this == nullptr || this->isEmpty())
             return;
         this->left->addToArr(arr, counter);
-        AVL* a = new AVL(this);
+        shared_ptr<AVL> a = std::make_shared<AVL>(this);
         arr[*counter] = a;
         *counter += 1;
         this->right->addToArr(arr, counter);
@@ -418,8 +431,8 @@ public:
     }//v
 
 
-    AVL* arrToAvl(AVL** arr,int size){
-        this->nodeHeight = ceil(log(size + 1)) - 1;
+    AVL* arrToAvl(shared_ptr<AVL>* arr,int size){
+        this->nodeHeight = ceil(log2(size + 1)) - 1;
         this->buildCompleteTree();
         int count = pow(2, nodeHeight + 1) - 1 - size;
         int *counter = &count;
@@ -438,11 +451,12 @@ public:
         this->nodeHeight = this->heightCalc();
     }
 
-    void addToTree(AVL** arr, int * counter){
+    void addToTree(shared_ptr<AVL>* arr, int * counter){
         if(this == nullptr)
             return;
         this->left->addToTree(arr, counter);
         this->nodeData = static_cast<AVL>(*arr[*counter]).nodeData;
+
         *counter += 1;
         this->right->addToTree(arr, counter);
     }
@@ -453,10 +467,11 @@ public:
         }
         if(0 < *toRemove && this->nodeHeight == 0){
             *toRemove -= 1;
-            if(this->father->right == this)
-                this->father->right = nullptr;
-            else
-                this->father->left = nullptr;
+//            if(this->father->right == this)
+//                this->father->right = nullptr;
+//            else
+//                this->father->left = nullptr;
+            //this->nodeData = Data();
             delete this;
             return;
         }

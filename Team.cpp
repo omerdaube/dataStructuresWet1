@@ -107,11 +107,11 @@ void Team::deleteTree() {
     this->players.deleteAll();
 }
 
-AVL<shared_ptr<Player>, PlayersByGoals>** Team::getArrOfAvl() {
+shared_ptr<AVL<shared_ptr<Player>, PlayersByGoals>>* Team::getArrOfAvl() {
     return players.avlToArr();
 }
 
-AVL<shared_ptr<Player>, PlayersByGoals> **Team::avlToArrTeam() {
+shared_ptr<AVL<shared_ptr<Player>, PlayersByGoals>>* Team::avlToArrTeam() {
     return players.avlToArr();
 }
 
@@ -138,3 +138,22 @@ void Team::rec(AVL<shared_ptr<Player>, PlayersByGoals> a){
         rec(a.getRight());
     }
 }
+
+void Team::updatePlayersTeam(shared_ptr<Team> nt) {
+    rec2(this->players, nt);
+}
+
+void Team::rec2(AVL<shared_ptr<Player>, PlayersByGoals> a, shared_ptr<Team> nt) {
+    if(a.getLeft()){
+        rec(a.getLeft());
+    }
+    if(a.getData()) {
+        a.getData()->setTeam(nt);
+    }
+    if(a.getRight()){
+        rec(a.getRight());
+    }
+}
+
+
+

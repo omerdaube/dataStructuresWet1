@@ -101,5 +101,9 @@ DoublyLinkedList<shared_ptr<Player>> Player::getPlace() const {
 
 Player::Player(int playerID) : playerID(playerID), numGames(0), numCards(0), numGoals(0), isGuard(false), myTeam(shared_ptr<Team>()){}
 
+void Player::setTeam(shared_ptr<Team> nt) {
+    this->myTeam = nt;
+}
+
 
 

@@ -8,7 +8,7 @@ TeamsByID::TeamsByID(shared_ptr<Team> team1, shared_ptr<Team> team2, int c) : te
 
 bool TeamsByID::operator() () const
 {
-    bool toRet;
+    bool toRet = false;
     if(!team1 || !team2){
         return false;
     }

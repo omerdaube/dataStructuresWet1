@@ -31,6 +31,7 @@ public:
     int getIsGuard() const;
     shared_ptr<Team> getTeam() const;
     void setNumGames(int);
+    void setTeam(shared_ptr<Team>);
     void eraseTeam();
     void setNumGoals(int);
     void setPlace(DoublyLinkedList<shared_ptr<Player>>);
